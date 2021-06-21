@@ -1,21 +1,22 @@
 {
     "name": "eslint-plugin-sort-keys-custom-order",
     "version": "1.0.0",
-    "description": "Enforce keys sorting in a custom order with autofix",
+    "description": "Enforce keys sorting on objects and TS types in a custom order with autofix",
+    "author": {
+        "name": "Hugo Attal",
+        "url": "https://twitter.com/HugoAttal"
+    },
     "keywords": [
         "eslint",
         "eslintplugin",
-        "eslint-plugin"
+        "eslint-plugin",
+        "typescript"
     ],
-    "author": "Hugo Attal",
     "main": "dist/index.js",
     "scripts": {
         "build": "tsup src/index.ts --no-splitting --minify",
         "test": "jest"
     },
-    "files": [
-        "dist/**"
-    ],
     "devDependencies": {
         "@types/eslint": "^7.2.13",
         "@types/estree": "^0.0.48",
@@ -35,8 +36,20 @@
         "tsup": "^4.11.2",
         "typescript": "^4.3.4"
     },
+    "files": [
+        "dist/**"
+    ],
+    "license": "ISC",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/hugoattal/eslint-plugin-sort-keys-custom-order.git"
+    },
+    "homepage": "https://github.com/hugoattal/eslint-plugin-sort-keys-custom-order#readme",
+    "url": "https://github.com/hugoattal/eslint-plugin-sort-keys-custom-order",
+    "bugs": {
+        "url": "https://github.com/hugoattal/eslint-plugin-sort-keys-custom-order/issues"
+    },
     "engines": {
         "node": ">=0.10.0"
-    },
-    "license": "ISC"
+    }
 }

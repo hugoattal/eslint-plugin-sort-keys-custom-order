@@ -1,6 +1,6 @@
 # eslint-plugin-sort-keys-custom-order
 
-This plugin enforces alphabetically sorting keys in objects and typescript types with auto-fix. You can add a list of priority sorted keys for a custom sorting (like if you want "id" to be the first property).
+This plugin enforces alphabetically sorting keys in objects and typescript types with auto-fix. You can add a list of priority sorted keys for custom sorting (ex: if you want "id" to be the first property).
 
 ## Installation
 
@@ -21,11 +21,14 @@ $ npm install -D eslint-plugin-sort-keys-custom-order
 
 Add `sort-keys-custom-order` to the plugins section of your `.eslintrc` configuration file. You can omit the `eslint-plugin-` prefix:
 
-```json
-{
+```js
+// .eslintrc.js
+module.exports = {
+    /* ... */
     "plugins": [
         "sort-keys-custom-order"
     ]
+    /* ... */
 }
 ```
 
@@ -33,16 +36,17 @@ Add `sort-keys-custom-order` to the plugins section of your `.eslintrc` configur
 Then configure the rules you want to use under the rules section.
 
 ```js
+// .eslintrc.js
 module.exports = {
     /* ... */
     "rules": {
-        // For JS object sorting
+        // For JS objects sorting
         "sort-keys-custom-order/object-keys": ["error", { "orderedKeys": [
             "id",
             "name",
             "title"
         ] }],
-        // For TS type sorting
+        // For TS types sorting
         "sort-keys-custom-order/type-keys": ["error", { "orderedKeys": [
             "id",
             "name",

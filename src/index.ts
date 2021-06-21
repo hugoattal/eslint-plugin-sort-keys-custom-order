@@ -5,4 +5,3 @@ export const rules = {
     "object-keys": objectKeysRule,
     "type-keys": typeKeysRule
 };
-
