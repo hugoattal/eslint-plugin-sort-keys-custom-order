@@ -40,6 +40,19 @@ export const invalid: Array<InvalidTestCase<TMessageIds, TOptions>> = [
     },
     {
         code: `const a = {
+    a:1,
+    c:3,
+    b:2
+}`,
+        output: `const a = {
+    a:1,
+    b:2,
+    c:3
+}`,
+        errors: [{ messageId: "object-keys-error" }]
+    },
+    {
+        code: `const a = {
     // b1
     // b2
     b:2,

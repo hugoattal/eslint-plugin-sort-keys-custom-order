@@ -28,6 +28,7 @@
         "eslint-import-resolver-alias": "^1.1.2",
         "eslint-import-resolver-typescript": "^2.4.0",
         "eslint-plugin-import": "^2.23.4",
+        "eslint-plugin-sort-keys-custom-order": "file:..\\eslint-plugin-sort-keys-custom-order",
         "jest": "^27.0.4",
         "ts-jest": "^27.0.3",
         "ts-node": "^10.0.0",

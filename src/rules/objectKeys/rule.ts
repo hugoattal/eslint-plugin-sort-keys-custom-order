@@ -11,9 +11,9 @@ export function createRule(context: RuleContext<TMessageIds, TOptions>): RuleLis
     return {
         ObjectExpression() {
             nodeStack = {
-                upper: nodeStack,
                 name: undefined,
-                node: undefined
+                node: undefined,
+                upper: nodeStack
             };
         },
         "ObjectExpression:exit"() {
@@ -29,9 +29,9 @@ export function createRule(context: RuleContext<TMessageIds, TOptions>): RuleLis
             }
 
             const prevNodeStack: TNodeStack<TSESTree.Property> = {
-                upper: nodeStack,
                 name: nodeStack.name,
-                node: nodeStack.node
+                node: nodeStack.node,
+                upper: nodeStack
             };
 
             const thisName = getPropertyName(node);
@@ -51,16 +51,18 @@ export function createRule(context: RuleContext<TMessageIds, TOptions>): RuleLis
                 }
 
                 context.report({
-                    node,
+                    data: {
+                        prevName: prevNodeStack.name,
+                        thisName
+                    },
+                    fix: getFixer(node, prevNodeStack, context),
                     loc: node.key.loc,
                     messageId: "object-keys-error",
-                    data: {
-                        thisName,
-                        prevName: prevNodeStack.name
-                    },
-                    fix: getFixer(node, prevNodeStack, context)
+                    node
                 });
             }
         }
     };
 }
+
+

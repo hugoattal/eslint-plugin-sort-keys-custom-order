@@ -12,7 +12,8 @@ module.exports = {
     },
     plugins: [
         "@typescript-eslint",
-        "import"
+        "import",
+        "sort-keys-custom-order"
     ],
     root: true,
     rules: {
@@ -32,6 +33,8 @@ module.exports = {
         "prefer-template": "error",
         "quotes": ["error", "double", { "allowTemplateLiterals": true }],
         "semi": ["error", "always"],
+        "sort-keys-custom-order/object-keys": ["error"],
+        "sort-keys-custom-order/type-keys": ["error"],
         "space-in-parens": ["error", "never"],
         "space-infix-ops": ["error"],
         "template-curly-spacing": ["error", "always"]

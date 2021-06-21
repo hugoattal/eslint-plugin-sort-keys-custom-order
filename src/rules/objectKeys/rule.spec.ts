@@ -13,7 +13,7 @@ describe("object-keys", () => {
     const ruleTester = new RuleTester(ruleTesterConfig);
 
     ruleTester.run("object-keys", rule, {
-        valid,
-        invalid
+        invalid,
+        valid
     });
 });

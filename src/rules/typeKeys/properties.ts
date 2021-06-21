@@ -1,11 +1,11 @@
 export default {
-    type: "object",
+    additionalProperties: false,
     properties: {
         orderedKeys: {
             type: "array"
         }
     },
-    additionalProperties: false
+    type: "object"
 };
 
 export type TOptions = Array<{

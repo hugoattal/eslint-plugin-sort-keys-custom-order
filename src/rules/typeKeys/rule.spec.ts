@@ -13,7 +13,7 @@ describe("type-keys", () => {
     const ruleTester = new RuleTester(ruleTesterConfig);
 
     ruleTester.run("type-keys", rule, {
-        valid,
-        invalid
+        invalid,
+        valid
     });
 });

@@ -25,9 +25,9 @@ export function getOrderFunction(orderedKeys: Array<string> | undefined): (a: st
 }
 
 export type TNodeStack<TProperty extends TSESTree.Property | TSESTree.TSPropertySignature> = {
-    upper: TNodeStack<TProperty>,
     name: string | undefined,
     node: TProperty | undefined
+    upper: TNodeStack<TProperty>,
 } | undefined
 
 export function getFixer<TMessageIds extends string, TOptions extends readonly unknown[], TProperty extends TSESTree.Property | TSESTree.TSPropertySignature>
@@ -50,13 +50,70 @@ function swapProperty<TProperty extends TSESTree.Property | TSESTree.TSPropertyS
 (sourceCode: Readonly<SourceCode>, fixes: Array<RuleFix>, fixer: RuleFixer, fromNode: TProperty, toNode: TProperty): void {
 
     const fromNodeRange = getNodeRange(fromNode);
-    const fromNodeCode = sourceCode.text.slice(fromNodeRange.start, fromNodeRange.end);
+    const fromNodeComma = getComma(fromNode);
 
     const toNodeRange = getNodeRange(toNode);
-    const toNodeCode = sourceCode.text.slice(toNodeRange.start, toNodeRange.end);
+    const toNodeComma = getComma(toNode);
 
-    fixes.push(fixer.replaceTextRange([fromNodeRange.start, fromNodeRange.end], toNodeCode));
-    fixes.push(fixer.replaceTextRange([toNodeRange.start, toNodeRange.end], fromNodeCode));
+    if (!!fromNodeComma !== !!toNodeComma) {
+        if (fromNodeComma) {
+            const commaRange = {
+                end: sourceCode.getIndexFromLoc(fromNodeComma.loc.end),
+                start: sourceCode.getIndexFromLoc(fromNodeComma.loc.start)
+            };
+
+            fromNodeRange.end = Math.max(fromNodeRange.end, commaRange.end);
+
+            const toNodeLastToken = sourceCode.getLastToken(toNode);
+            if (!toNodeLastToken) {
+                return;
+            }
+            const commaPosition = sourceCode.getIndexFromLoc(toNodeLastToken.loc.end);
+
+            const fromNodeCodeBeforeComma = sourceCode.text.slice(fromNodeRange.start, commaRange.start);
+            const fromNodeCodeAfterComma = sourceCode.text.slice(commaRange.end, fromNodeRange.end);
+
+            const toNodeCodeBeforeComma = sourceCode.text.slice(toNodeRange.start, commaPosition);
+            const toNodeCodeAfterComma = sourceCode.text.slice(commaPosition, toNodeRange.end);
+
+            fixes.push(fixer.replaceTextRange([commaRange.end, fromNodeRange.end], toNodeCodeAfterComma));
+            fixes.push(fixer.replaceTextRange([fromNodeRange.start, commaRange.start], toNodeCodeBeforeComma));
+            fixes.push(fixer.replaceTextRange([commaPosition, toNodeRange.end], fromNodeCodeAfterComma));
+            fixes.push(fixer.replaceTextRange([toNodeRange.start, commaPosition], fromNodeCodeBeforeComma));
+        }
+        else if (toNodeComma) {
+            const commaRange = {
+                end: sourceCode.getIndexFromLoc(toNodeComma.loc.end),
+                start: sourceCode.getIndexFromLoc(toNodeComma.loc.start)
+            };
+
+            toNodeRange.end = Math.max(toNodeRange.end, commaRange.end);
+
+            const fromNodeLastToken = sourceCode.getLastToken(fromNode);
+            if (!fromNodeLastToken) {
+                return;
+            }
+            const commaPosition = sourceCode.getIndexFromLoc(fromNodeLastToken.loc.end);
+
+            const fromNodeCodeBeforeComma = sourceCode.text.slice(fromNodeRange.start, commaPosition);
+            const fromNodeCodeAfterComma = sourceCode.text.slice(commaPosition, fromNodeRange.end);
+
+            const toNodeCodeBeforeComma = sourceCode.text.slice(toNodeRange.start, commaRange.start);
+            const toNodeCodeAfterComma = sourceCode.text.slice(commaRange.end, toNodeRange.end);
+
+            fixes.push(fixer.replaceTextRange([commaPosition, fromNodeRange.end], toNodeCodeAfterComma));
+            fixes.push(fixer.replaceTextRange([fromNodeRange.start, commaPosition], toNodeCodeBeforeComma));
+            fixes.push(fixer.replaceTextRange([commaRange.end, toNodeRange.end], fromNodeCodeAfterComma));
+            fixes.push(fixer.replaceTextRange([toNodeRange.start, commaRange.start], fromNodeCodeBeforeComma));
+        }
+    }
+    else {
+        const fromNodeCode = sourceCode.text.slice(fromNodeRange.start, fromNodeRange.end);
+        const toNodeCode = sourceCode.text.slice(toNodeRange.start, toNodeRange.end);
+
+        fixes.push(fixer.replaceTextRange([fromNodeRange.start, fromNodeRange.end], toNodeCode));
+        fixes.push(fixer.replaceTextRange([toNodeRange.start, toNodeRange.end], fromNodeCode));
+    }
 
     function getNodeRange(node: TProperty) {
         let nextToken = sourceCode.getTokenAfter(node);
@@ -71,8 +128,8 @@ function swapProperty<TProperty extends TSESTree.Property | TSESTree.TSPropertyS
         }
 
         const nodeLoc = {
-            start: sourceCode.getFirstToken(node)?.loc.start,
-            end: sourceCode.getLastToken(node)?.loc.end
+            end: sourceCode.getLastToken(node)?.loc.end,
+            start: sourceCode.getFirstToken(node)?.loc.start
         };
 
         if (!nodeLoc.start || !nodeLoc.end) {
@@ -96,7 +153,14 @@ function swapProperty<TProperty extends TSESTree.Property | TSESTree.TSPropertyS
             end = sourceCode.lineStartIndices[node.loc.end.line];
         }
 
-        return { start, end };
+        return { end, start };
+    }
+
+    function getComma(node: TProperty) {
+        const nextToken = sourceCode.getTokenAfter(node);
+        if (nextToken && nextToken.type === "Punctuator" && nextToken.value === ",") {
+            return nextToken;
+        }
     }
 }
 
