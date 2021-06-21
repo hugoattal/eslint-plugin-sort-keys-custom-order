@@ -3,52 +3,73 @@ import { TMessageIds, TOptions } from "./properties";
 
 export const valid: Array<ValidTestCase<TOptions>> = [
     {
-        code: "const a = {a:1, b:2, c:3}"
+        code: "const a = {a:1,b:2,c:3}"
     },
     {
-        code: "const a = {b:1, a:2, c:3}",
+        code: "const a = {b:1,a:2,c:3}",
         options: [{ orderedKeys: ["b"] }]
     },
     {
-        code: "const a = {b:1, a:2, c:3}",
+        code: "const a = {b:1,a:2,c:3}",
         options: [{ orderedKeys: ["b", "a"] }]
     }
 ];
 
 export const invalid: Array<InvalidTestCase<TMessageIds, TOptions>> = [
     {
-        code: "const a = {b:1, a:2, c:3}",
-        output: "const a = {a:2, b:1, c:3}",
+        code: "const a = {b:2,a:1,c:3}",
+        output: "const a = {a:1,b:2,c:3}",
         errors: [{ messageId: "object-keys-error" }]
     },
     {
-        code: "const a = {a:1, b:2, c:3}",
-        output: "const a = {b:2, a:1, c:3}",
+        code: "const a = {a:1,c:3,b:2}",
+        output: "const a = {a:1,b:2,c:3}",
+        errors: [{ messageId: "object-keys-error" }]
+    },
+    {
+        code: "const a = {a:1,b:2,c:3}",
+        output: "const a = {b:2,a:1,c:3}",
         errors: [{ messageId: "object-keys-error" }],
         options: [{ orderedKeys: ["b"] }]
     },
     {
-        code: "const a = {a:1, b:2, c:3}",
-        output: "const a = {b:2, a:1, c:3}",
+        code: "const a = {a:1,b:2,c:3}",
+        output: "const a = {b:2,a:1,c:3}",
         errors: [{ messageId: "object-keys-error" }],
         options: [{ orderedKeys: ["b", "a"] }]
     },
     {
         code: `const a = {
-    // a
-    a:1,
-    // b
+    // b1
+    // b2
     b:2,
-    c:3,
+    // a1
+    // a2
+    a:1,
+    c:3
 }`,
         output: `const a = {
-    // b
-    b:2,
-    // a
+    // a1
+    // a2
     a:1,
-    c:3,
+    // b1
+    // b2
+    b:2,
+    c:3
 }`,
-        errors: [{ messageId: "object-keys-error" }],
-        options: [{ orderedKeys: ["b", "a"] }]
+        errors: [{ messageId: "object-keys-error" }]
+    },
+    {
+        code: `const a = {
+    b:2, // b
+    a:1, // a
+    c:3
+}`,
+        output: `const a = {
+    a:1, // a
+    b:2, // b
+    c:3
+}`,
+        errors: [{ messageId: "object-keys-error" }]
     }
 ];

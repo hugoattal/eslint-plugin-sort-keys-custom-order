@@ -27,11 +27,11 @@ export function getOrderFunction(orderedKeys: Array<string> | undefined): (a: st
 export type TNodeStack<TProperty extends TSESTree.Property | TSESTree.TSPropertySignature> = {
     upper: TNodeStack<TProperty>,
     name: string | undefined,
-    node: TProperty| undefined
+    node: TProperty | undefined
 } | undefined
 
 export function getFixer<TMessageIds extends string, TOptions extends readonly unknown[], TProperty extends TSESTree.Property | TSESTree.TSPropertySignature>
-(node: TProperty, nodeStack: TNodeStack<TProperty>, context: RuleContext<TMessageIds,TOptions>) {
+(node: TProperty, nodeStack: TNodeStack<TProperty>, context: RuleContext<TMessageIds, TOptions>) {
     return (fixer: RuleFixer) => {
         const fixes: Array<RuleFix> = [];
 
@@ -40,25 +40,64 @@ export function getFixer<TMessageIds extends string, TOptions extends readonly u
         }
 
         const sourceCode = context.getSourceCode();
-        moveProperty<TProperty>(sourceCode, fixes, fixer, node, nodeStack.node);
-        moveProperty<TProperty>(sourceCode, fixes, fixer, nodeStack.node, node);
+        swapProperty<TProperty>(sourceCode, fixes, fixer, node, nodeStack.node);
 
         return fixes;
     };
 }
 
-function moveProperty<TProperty extends TSESTree.Property | TSESTree.TSPropertySignature>
+function swapProperty<TProperty extends TSESTree.Property | TSESTree.TSPropertySignature>
 (sourceCode: Readonly<SourceCode>, fixes: Array<RuleFix>, fixer: RuleFixer, fromNode: TProperty, toNode: TProperty): void {
-    const prevText = sourceCode.getText(fromNode);
-    const leadingComments = sourceCode.getCommentsBefore(fromNode);
-    console.log(sourceCode.getTokenBefore(fromNode));
 
-    for (const leadingComment of leadingComments) {
-        fixes.push(fixer.insertTextBefore(toNode, `${ sourceCode.getText(leadingComment as any) }\n`));
-        fixes.push(fixer.remove(leadingComment));
+    const fromNodeRange = getNodeRange(fromNode);
+    const fromNodeCode = sourceCode.text.slice(fromNodeRange.start, fromNodeRange.end);
+
+    const toNodeRange = getNodeRange(toNode);
+    const toNodeCode = sourceCode.text.slice(toNodeRange.start, toNodeRange.end);
+
+    fixes.push(fixer.replaceTextRange([fromNodeRange.start, fromNodeRange.end], toNodeCode));
+    fixes.push(fixer.replaceTextRange([toNodeRange.start, toNodeRange.end], fromNodeCode));
+
+    function getNodeRange(node: TProperty) {
+        let nextToken = sourceCode.getTokenAfter(node);
+        if (nextToken && nextToken.type === "Punctuator" && nextToken.value === ",") {
+            nextToken = sourceCode.getTokenAfter(nextToken);
+        }
+
+        const prevToken = sourceCode.getTokenBefore(node);
+
+        if (!prevToken || !nextToken) {
+            throw Error("eslint-plugin-sort-keys-custom-order: Error while swapping properties");
+        }
+
+        const nodeLoc = {
+            start: sourceCode.getFirstToken(node)?.loc.start,
+            end: sourceCode.getLastToken(node)?.loc.end
+        };
+
+        if (!nodeLoc.start || !nodeLoc.end) {
+            throw Error("eslint-plugin-sort-keys-custom-order: Error while swapping properties");
+        }
+
+        let start;
+
+        if (prevToken.loc.end.line === nodeLoc.start.line) {
+            start = sourceCode.getIndexFromLoc(nodeLoc.start);
+        }
+        else {
+            start = sourceCode.lineStartIndices[prevToken.loc.end.line];
+        }
+
+        let end;
+        if (nextToken.loc.start.line === nodeLoc.end.line) {
+            end = sourceCode.getIndexFromLoc(nodeLoc.end);
+        }
+        else {
+            end = sourceCode.lineStartIndices[node.loc.end.line];
+        }
+
+        return { start, end };
     }
-
-    fixes.push(fixer.replaceText(toNode, prevText));
 }
 
 export function getPropertyName<TProperty extends TSESTree.Property | TSESTree.TSPropertySignature>(node: TProperty): string | undefined {
