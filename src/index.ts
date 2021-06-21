@@ -1,6 +1,8 @@
-import sortKeysCustomOrder from "./sort-keys-custom-order";
+import objectKeysRule from "./rules/objectKeys";
+import typeKeysRule from "./rules/typeKeys";
 
 export const rules = {
-    "sort-keys-custom-order": sortKeysCustomOrder
+    "object-keys": objectKeysRule,
+    "type-keys": typeKeysRule
 };
 

@@ -10,7 +10,8 @@
     "author": "Hugo Attal",
     "main": "dist/index.js",
     "scripts": {
-        "build": "tsup src/index.ts --no-splitting --minify"
+        "build": "tsup src/index.ts --no-splitting --minify",
+        "test": "jest"
     },
     "files": [
         "dist/**"
@@ -21,6 +22,7 @@
         "@types/jest": "^26.0.23",
         "@types/node": "^15.12.4",
         "@typescript-eslint/eslint-plugin": "^4.27.0",
+        "@typescript-eslint/experimental-utils": "^4.27.0",
         "@typescript-eslint/parser": "^4.27.0",
         "eslint": "^7.29.0",
         "eslint-import-resolver-alias": "^1.1.2",
