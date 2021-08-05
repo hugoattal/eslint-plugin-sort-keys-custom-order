@@ -32,6 +32,11 @@ export const invalid: Array<InvalidTestCase<TMessageIds, TOptions>> = [
         errors: [{ messageId: "type-keys-error" }],
         options: [{ orderedKeys: ["b", "a"] }],
         output: "type a = {b:2, a:1, c:3}"
+    },
+    {
+        code: "interface a {b:1, a:2, c:3}",
+        errors: [{ messageId: "type-keys-error" }],
+        output: "interface a {a:2, b:1, c:3}"
     }
 ];
 

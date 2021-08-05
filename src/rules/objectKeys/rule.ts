@@ -23,6 +23,20 @@ export function createRule(context: RuleContext<TMessageIds, TOptions>): RuleLis
 
             nodeStack = nodeStack.upper;
         },
+        ObjectPattern() {
+            nodeStack = {
+                name: undefined,
+                node: undefined,
+                upper: nodeStack
+            };
+        },
+        "ObjectPattern:exit"() {
+            if (!nodeStack) {
+                return;
+            }
+
+            nodeStack = nodeStack.upper;
+        },
         Property(node) {
             if (!nodeStack) {
                 return;

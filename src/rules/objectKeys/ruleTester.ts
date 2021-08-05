@@ -12,31 +12,37 @@ export const valid: Array<ValidTestCase<TOptions>> = [
     {
         code: "const a = {b:1,a:2,c:3}",
         options: [{ orderedKeys: ["b", "a"] }]
+    },
+    {
+        code: `const test ={
+    async update({ name, password, username }: { name: string; password: { new: string; old: string }; username: string }) {
+    }
+};`
     }
 ];
 
 export const invalid: Array<InvalidTestCase<TMessageIds, TOptions>> = [
     {
         code: "const a = {b:2,a:1,c:3}",
-        output: "const a = {a:1,b:2,c:3}",
-        errors: [{ messageId: "object-keys-error" }]
+        errors: [{ messageId: "object-keys-error" }],
+        output: "const a = {a:1,b:2,c:3}"
     },
     {
         code: "const a = {a:1,c:3,b:2}",
-        output: "const a = {a:1,b:2,c:3}",
-        errors: [{ messageId: "object-keys-error" }]
+        errors: [{ messageId: "object-keys-error" }],
+        output: "const a = {a:1,b:2,c:3}"
     },
     {
         code: "const a = {a:1,b:2,c:3}",
-        output: "const a = {b:2,a:1,c:3}",
         errors: [{ messageId: "object-keys-error" }],
-        options: [{ orderedKeys: ["b"] }]
+        options: [{ orderedKeys: ["b"] }],
+        output: "const a = {b:2,a:1,c:3}"
     },
     {
         code: "const a = {a:1,b:2,c:3}",
-        output: "const a = {b:2,a:1,c:3}",
         errors: [{ messageId: "object-keys-error" }],
-        options: [{ orderedKeys: ["b", "a"] }]
+        options: [{ orderedKeys: ["b", "a"] }],
+        output: "const a = {b:2,a:1,c:3}"
     },
     {
         code: `const a = {
@@ -44,12 +50,12 @@ export const invalid: Array<InvalidTestCase<TMessageIds, TOptions>> = [
     c:3,
     b:2
 }`,
+        errors: [{ messageId: "object-keys-error" }],
         output: `const a = {
     a:1,
     b:2,
     c:3
-}`,
-        errors: [{ messageId: "object-keys-error" }]
+}`
     },
     {
         code: `const a = {
@@ -61,6 +67,7 @@ export const invalid: Array<InvalidTestCase<TMessageIds, TOptions>> = [
     a:1,
     c:3
 }`,
+        errors: [{ messageId: "object-keys-error" }],
         output: `const a = {
     // a1
     // a2
@@ -69,8 +76,7 @@ export const invalid: Array<InvalidTestCase<TMessageIds, TOptions>> = [
     // b2
     b:2,
     c:3
-}`,
-        errors: [{ messageId: "object-keys-error" }]
+}`
     },
     {
         code: `const a = {
@@ -78,11 +84,11 @@ export const invalid: Array<InvalidTestCase<TMessageIds, TOptions>> = [
     a:1, // a
     c:3
 }`,
+        errors: [{ messageId: "object-keys-error" }],
         output: `const a = {
     a:1, // a
     b:2, // b
     c:3
-}`,
-        errors: [{ messageId: "object-keys-error" }]
+}`
     }
 ];

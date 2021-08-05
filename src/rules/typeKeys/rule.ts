@@ -9,6 +9,20 @@ export function createRule(context: RuleContext<TMessageIds, TOptions>): RuleLis
     const isInOrder = getOrderFunction(context.options[0]?.orderedKeys);
 
     return {
+        TSInterfaceDeclaration() {
+            nodeStack = {
+                name: undefined,
+                node: undefined,
+                upper: nodeStack
+            };
+        },
+        "TSInterfaceDeclaration:exit"() {
+            if (!nodeStack) {
+                return;
+            }
+
+            nodeStack = nodeStack.upper;
+        },
         TSPropertySignature(node) {
             if (!nodeStack) {
                 return;
