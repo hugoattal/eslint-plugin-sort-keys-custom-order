@@ -12,6 +12,9 @@ export const valid: Array<TSESLint.ValidTestCase<TOptions>> = [
     {
         code: "type a = {b:1, a:2, c:3}",
         options: [{ orderedKeys: ["b", "a"] }]
+    },
+    {
+        code: "function a(): Promise<{a: string, b: string}> {}"
     }
 ];
 
@@ -20,6 +23,19 @@ export const invalid: Array<TSESLint.InvalidTestCase<TMessageIds, TOptions>> = [
         code: "type a = {b:1, a:2, c:3}",
         errors: [{ messageId: "type-keys-error" }],
         output: "type a = {a:2, b:1, c:3}"
+    },
+    {
+        code: `type a = {
+    b:1,
+    a:2,
+    c:3
+}`,
+        errors: [{ messageId: "type-keys-error" }],
+        output: `type a = {
+    a:2,
+    b:1,
+    c:3
+}`
     },
     {
         code: "type a = {a:1, b:2, c:3}",
@@ -37,6 +53,16 @@ export const invalid: Array<TSESLint.InvalidTestCase<TMessageIds, TOptions>> = [
         code: "interface a {b:1, a:2, c:3}",
         errors: [{ messageId: "type-keys-error" }],
         output: "interface a {a:2, b:1, c:3}"
+    },
+    {
+        code: "function a(): Promise<{b: string, a: string}> {}",
+        errors: [{ messageId: "type-keys-error" }],
+        output: "function a(): Promise<{a: string, b: string}> {}"
+    },
+    {
+        code: "const a: {b: string, a: string} = {}",
+        errors: [{ messageId: "type-keys-error" }],
+        output: "const a: {a: string, b: string} = {}"
     }
 ];
 

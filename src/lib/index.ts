@@ -49,6 +49,7 @@ function swapProperty<TProperty extends TSESTree.Property | TSESTree.TSPropertyS
 (sourceCode: Readonly<TSESLint.SourceCode>, fixes: Array<TSESLint.RuleFix>, fixer: TSESLint.RuleFixer, fromNode: TProperty, toNode: TProperty): void {
 
     const fromNodeRange = getNodeRange(fromNode);
+    console.log(fromNode);
     const fromNodeComma = getComma(fromNode);
 
     const toNodeRange = getNodeRange(toNode);
@@ -116,6 +117,7 @@ function swapProperty<TProperty extends TSESTree.Property | TSESTree.TSPropertyS
 
     function getNodeRange(node: TProperty) {
         let nextToken = sourceCode.getTokenAfter(node);
+
         if (nextToken && nextToken.type === "Punctuator" && nextToken.value === ",") {
             nextToken = sourceCode.getTokenAfter(nextToken);
         }
@@ -150,6 +152,11 @@ function swapProperty<TProperty extends TSESTree.Property | TSESTree.TSPropertyS
         }
         else {
             end = sourceCode.lineStartIndices[node.loc.end.line];
+        }
+
+        if (node.type === TSESTree.AST_NODE_TYPES.TSPropertySignature) {
+            start = node.key.range[0];
+            end = node.typeAnnotation?.range[1] || node.key.range[1];
         }
 
         return { end, start };
