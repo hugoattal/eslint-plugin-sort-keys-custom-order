@@ -1,8 +1,8 @@
-import { RuleTester, RuleTesterConfig } from "@typescript-eslint/experimental-utils/dist/ts-eslint";
+import { TSESLint } from "@typescript-eslint/utils";
 import { invalid, valid } from "./ruleTester";
 import rule from "./index";
 
-const ruleTesterConfig: RuleTesterConfig = {
+const ruleTesterConfig: TSESLint.RuleTesterConfig = {
     parser: require.resolve("@typescript-eslint/parser"),
     parserOptions: {
         sourceType: "module"
@@ -10,7 +10,7 @@ const ruleTesterConfig: RuleTesterConfig = {
 };
 
 describe("type-keys", () => {
-    const ruleTester = new RuleTester(ruleTesterConfig);
+    const ruleTester = new TSESLint.RuleTester(ruleTesterConfig);
 
     ruleTester.run("type-keys", rule, {
         invalid,

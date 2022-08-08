@@ -1,7 +1,7 @@
-import { ValidTestCase, InvalidTestCase } from "@typescript-eslint/experimental-utils/dist/ts-eslint";
+import { TSESLint } from "@typescript-eslint/utils";
 import { TMessageIds, TOptions } from "./properties";
 
-export const valid: Array<ValidTestCase<TOptions>> = [
+export const valid: Array<TSESLint.ValidTestCase<TOptions>> = [
     {
         code: "const a = {a:1,b:2,c:3}"
     },
@@ -21,7 +21,7 @@ export const valid: Array<ValidTestCase<TOptions>> = [
     }
 ];
 
-export const invalid: Array<InvalidTestCase<TMessageIds, TOptions>> = [
+export const invalid: Array<TSESLint.InvalidTestCase<TMessageIds, TOptions>> = [
     {
         code: "const a = {b:2,a:1,c:3}",
         errors: [{ messageId: "object-keys-error" }],

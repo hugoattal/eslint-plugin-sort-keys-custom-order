@@ -1,5 +1,4 @@
-import { RuleContext, RuleFix, RuleFixer, SourceCode } from "@typescript-eslint/experimental-utils/dist/ts-eslint";
-import { TSESTree } from "@typescript-eslint/experimental-utils/dist/ts-estree";
+import { TSESLint, TSESTree } from "@typescript-eslint/utils";
 
 export function getOrderFunction(orderedKeys: Array<string> | undefined): (a: string, b: string) => boolean {
     return (a: string, b: string) => {
@@ -31,9 +30,9 @@ export type TNodeStack<TProperty extends TSESTree.Property | TSESTree.TSProperty
 } | undefined
 
 export function getFixer<TMessageIds extends string, TOptions extends readonly unknown[], TProperty extends TSESTree.Property | TSESTree.TSPropertySignature>
-(node: TProperty, nodeStack: TNodeStack<TProperty>, context: RuleContext<TMessageIds, TOptions>) {
-    return (fixer: RuleFixer) => {
-        const fixes: Array<RuleFix> = [];
+(node: TProperty, nodeStack: TNodeStack<TProperty>, context: TSESLint.RuleContext<TMessageIds, TOptions>) {
+    return (fixer: TSESLint.RuleFixer) => {
+        const fixes: Array<TSESLint.RuleFix> = [];
 
         if (!nodeStack?.node) {
             return fixes;
@@ -47,7 +46,7 @@ export function getFixer<TMessageIds extends string, TOptions extends readonly u
 }
 
 function swapProperty<TProperty extends TSESTree.Property | TSESTree.TSPropertySignature>
-(sourceCode: Readonly<SourceCode>, fixes: Array<RuleFix>, fixer: RuleFixer, fromNode: TProperty, toNode: TProperty): void {
+(sourceCode: Readonly<TSESLint.SourceCode>, fixes: Array<TSESLint.RuleFix>, fixer: TSESLint.RuleFixer, fromNode: TProperty, toNode: TProperty): void {
 
     const fromNodeRange = getNodeRange(fromNode);
     const fromNodeComma = getComma(fromNode);
