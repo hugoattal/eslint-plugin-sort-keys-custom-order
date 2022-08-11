@@ -1,6 +1,6 @@
 {
     "name": "eslint-plugin-sort-keys-custom-order",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "Enforce keys sorting on objects and TS types in a custom order with autofix",
     "author": {
         "name": "Hugo Attal",
