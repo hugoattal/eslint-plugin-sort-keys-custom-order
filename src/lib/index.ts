@@ -49,7 +49,6 @@ function swapProperty<TProperty extends TSESTree.Property | TSESTree.TSPropertyS
 (sourceCode: Readonly<TSESLint.SourceCode>, fixes: Array<TSESLint.RuleFix>, fixer: TSESLint.RuleFixer, fromNode: TProperty, toNode: TProperty): void {
 
     const fromNodeRange = getNodeRange(fromNode);
-    console.log(fromNode);
     const fromNodeComma = getComma(fromNode);
 
     const toNodeRange = getNodeRange(toNode);
