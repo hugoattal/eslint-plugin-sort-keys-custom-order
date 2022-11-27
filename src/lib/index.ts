@@ -23,13 +23,13 @@ export function getOrderFunction(orderedKeys: Array<string> | undefined): (a: st
     };
 }
 
-export type TNodeStack<TProperty extends TSESTree.Property | TSESTree.TSPropertySignature> = {
-    name: string | undefined,
-    node: TProperty | undefined
-    upper: TNodeStack<TProperty>,
-} | undefined
+export type TNodeStack<TType> = {
+    name?: string,
+    node?: TType,
+    upper?: TNodeStack<TType>,
+} | undefined;
 
-export function getFixer<TMessageIds extends string, TOptions extends readonly unknown[], TProperty extends TSESTree.Property | TSESTree.TSPropertySignature>
+export function getFixer<TMessageIds extends string, TOptions extends readonly unknown[], TProperty extends TSESTree.Node>
 (node: TProperty, nodeStack: TNodeStack<TProperty>, context: TSESLint.RuleContext<TMessageIds, TOptions>) {
     return (fixer: TSESLint.RuleFixer) => {
         const fixes: Array<TSESLint.RuleFix> = [];
@@ -45,7 +45,7 @@ export function getFixer<TMessageIds extends string, TOptions extends readonly u
     };
 }
 
-function swapProperty<TProperty extends TSESTree.Property | TSESTree.TSPropertySignature>
+function swapProperty<TProperty extends TSESTree.Node>
 (sourceCode: Readonly<TSESLint.SourceCode>, fixes: Array<TSESLint.RuleFix>, fixer: TSESLint.RuleFixer, fromNode: TProperty, toNode: TProperty): void {
 
     const fromNodeRange = getNodeRange(fromNode);

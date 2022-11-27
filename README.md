@@ -67,6 +67,14 @@ Allow you to sort properties inside JS objects
 
 Allow you to sort properties inside TS types
 
+### sort-keys-custom-order/import-object-keys
+
+Allow you to sort properties inside JS import objects
+
+### sort-keys-custom-order/export-object-keys
+
+Allow you to sort properties inside JS export objects
+
 
 ## Example
 
