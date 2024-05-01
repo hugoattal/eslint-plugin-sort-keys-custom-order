@@ -22,14 +22,16 @@ $ npm install -D eslint-plugin-sort-keys-custom-order
 Add `sort-keys-custom-order` to the plugins section of your `.eslintrc` configuration file. You can omit the `eslint-plugin-` prefix:
 
 ```js
-// .eslintrc.js
-module.exports = {
+// eslint.config.js
+import sortKeysCustomOrder from "eslint-plugin-sort-keys-custom-order";
+
+export default [{
     /* ... */
-    "plugins": [
-        "sort-keys-custom-order"
-    ]
+    plugins: {
+        "sort-keys-custom-order": sortKeysCustomOrder
+    }
     /* ... */
-}
+}]
 ```
 
 
@@ -37,7 +39,7 @@ Then configure the rules you want to use under the rules section.
 
 ```js
 // .eslintrc.js
-module.exports = {
+export default [{
     /* ... */
     "rules": {
         // For JS objects sorting
@@ -54,7 +56,7 @@ module.exports = {
         ] }]
     }
     /* ... */
-}
+}]
 ```
 
 ## Supported Rules

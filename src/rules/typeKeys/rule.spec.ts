@@ -3,7 +3,7 @@ import { invalid, valid } from "./ruleTester";
 import rule from "./index";
 
 const ruleTesterConfig: TSESLint.RuleTesterConfig = {
-    parser: require.resolve("@typescript-eslint/parser"),
+    parser: "@typescript-eslint/parser",
     parserOptions: {
         sourceType: "module"
     }

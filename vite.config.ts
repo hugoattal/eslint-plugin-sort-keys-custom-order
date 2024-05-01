@@ -10,6 +10,7 @@ const alias = {
 export default defineConfig(() => {
     const config: UserConfig = {
         build: {
+            target: "esnext",
             lib: {
                 entry: "src/index.ts",
                 fileName: "index",

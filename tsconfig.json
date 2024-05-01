@@ -2,31 +2,25 @@
     "compilerOptions": {
         "baseUrl": ".",
         "paths": {
-            "@/*": ["src/*"]
+            "@/*": [
+                "./src/*"
+            ]
         },
-        "target": "esnext",
-        "module": "commonjs",
-        "moduleResolution": "node",
-        "strict": true,
-        "sourceMap": true,
-        "resolveJsonModule": true,
-        "esModuleInterop": true,
-        "lib": [
-            "esnext",
-            "dom"
-        ],
         "types": [
-            "node",
-            "jest"
-        ]
-    },
-    "ts-node": {
-        "transpileOnly": true,
-        "files": true,
+            "vitest/globals",
+            "vite/client"
+        ],
+        "outDir": "dist",
+        "declaration": true,
+        "target": "esnext",
+        "module": "esnext",
+        "moduleResolution": "node",
+        "esModuleInterop": true
     },
     "include": [
-        "src/**/*.ts",
-        "src/**/*.d.ts",
-        "src/**/*.vue"
+        "src"
+    ],
+    "exclude": [
+        "dist"
     ]
 }
