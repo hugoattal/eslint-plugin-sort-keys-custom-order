@@ -1,4 +1,6 @@
-export default {
+import type { JSONSchema } from "@typescript-eslint/utils";
+
+export const properties: JSONSchema.JSONSchema4 = {
     additionalProperties: false,
     properties: {
         orderedKeys: {

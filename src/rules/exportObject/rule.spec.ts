@@ -1,19 +1,20 @@
-import { TSESLint } from "@typescript-eslint/utils";
+import { RuleTester, RuleTesterConfig } from "@typescript-eslint/rule-tester";
 import { invalid, valid } from "./ruleTester";
-import rule from "./index";
+import { rule } from "./index";
 
-const ruleTesterConfig: TSESLint.RuleTesterConfig = {
-    parser: require.resolve("@typescript-eslint/parser"),
-    parserOptions: {
-        sourceType: "module"
-    }
+const ruleTesterConfig: RuleTesterConfig = {
+    parser: "@typescript-eslint/parser"
 };
 
-describe("import-object-keys", () => {
-    const ruleTester = new TSESLint.RuleTester(ruleTesterConfig);
+describe("export-object-keys", () => {
+    const ruleTester = new RuleTester(ruleTesterConfig);
 
-    ruleTester.run("import-object-keys", rule, {
-        invalid,
-        valid
-    });
+    ruleTester.run(
+        "export-object-keys",
+        rule,
+        {
+            invalid,
+            valid
+        }
+    );
 });

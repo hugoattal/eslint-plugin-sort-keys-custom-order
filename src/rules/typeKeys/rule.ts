@@ -2,7 +2,7 @@ import { TSESLint, TSESTree } from "@typescript-eslint/utils";
 import { TMessageIds, TOptions } from "./properties";
 import { getFixer, getOrderFunction, getPropertyName, TNodeStack } from "@/lib";
 
-export function createRule(context: TSESLint.RuleContext<TMessageIds, TOptions>): TSESLint.RuleListener {
+export function create(context: TSESLint.RuleContext<TMessageIds, TOptions>): TSESLint.RuleListener {
     let nodeStack: TNodeStack<TSESTree.TSPropertySignature>;
 
     const isInOrder = getOrderFunction(context.options[0]?.orderedKeys);

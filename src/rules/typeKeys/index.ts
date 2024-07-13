@@ -1,12 +1,11 @@
-import { TSESLint } from "@typescript-eslint/utils";
-import properties, { TMessageIds, TOptions } from "./properties";
-import { createRule } from "@/rules/typeKeys/rule";
+import { ESLintUtils } from "@typescript-eslint/utils";
+import { TMessageIds, properties } from "./properties";
+import { create } from "./rule";
+import { createRule } from "@/utils";
 
-
-const meta: TSESLint.RuleMetaData<TMessageIds> = {
+const meta: ESLintUtils.NamedCreateRuleMeta<TMessageIds> = {
     docs: {
         description: "Require type keys to be sorted with custom order",
-        recommended: false,
         url: "https://github.com/hugoattal/eslint-plugin-sort-keys-custom-order"
     },
     fixable: "code",
@@ -17,9 +16,9 @@ const meta: TSESLint.RuleMetaData<TMessageIds> = {
     type: "suggestion"
 };
 
-const rule: TSESLint.RuleModule<TMessageIds, TOptions> = {
-    create: createRule,
-    meta
-};
-
-export default rule;
+export const rule = createRule({
+    create,
+    defaultOptions: [],
+    meta,
+    name: "type-keys"
+});

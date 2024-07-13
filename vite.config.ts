@@ -1,6 +1,7 @@
 /// <reference types="vitest" />
 import * as path from "path";
 import { defineConfig, UserConfig } from "vite";
+import dts from "vite-plugin-dts";
 import packageDefinition from "./package.json";
 
 const alias = {
@@ -10,7 +11,6 @@ const alias = {
 export default defineConfig(() => {
     const config: UserConfig = {
         build: {
-            target: "esnext",
             lib: {
                 entry: "src/index.ts",
                 fileName: "index",
@@ -26,8 +26,12 @@ export default defineConfig(() => {
                         typescript: "typescript"
                     }
                 }
-            }
+            },
+            target: "esnext"
         },
+        plugins: [
+            dts()
+        ],
         resolve: {
             alias
         }
