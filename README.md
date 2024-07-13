@@ -59,6 +59,19 @@ export default [{
 }]
 ```
 
+Or you can use the recommended configuration:
+
+```js
+// eslint.config.js
+import sortKeysCustomOrder from "eslint-plugin-sort-keys-custom-order";
+
+export default [
+    /* ... */
+    sortKeysCustomOrder.configs["flat/recommended"],
+    /* ... */
+]
+```
+
 ## Supported Rules
 
 ### sort-keys-custom-order/object-keys
