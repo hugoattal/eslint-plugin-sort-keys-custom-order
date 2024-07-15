@@ -1,3 +1,4 @@
+import { ConfigWithExtends } from "typescript-eslint";
 import { rule as objectKeysRule } from "./rules/objectKeys";
 import { rule as typeKeysRule } from "./rules/typeKeys";
 import { rule as importObjectKeysRule } from "./rules/importObject";
@@ -8,7 +9,7 @@ const recommendedRules = {
     "sort-keys-custom-order/import-object-keys": "error",
     "sort-keys-custom-order/object-keys": "error",
     "sort-keys-custom-order/type-keys": "error"
-};
+} as const;
 
 const rules = {
     "export-object-keys": exportObjectKeysRule,
@@ -20,7 +21,7 @@ const rules = {
 const base = {
     meta: {
         name: "eslint-plugin-sort-keys-custom-order",
-        version: "2.0.0"
+        version: "2.0.1"
     },
     processors: {},
     rules
