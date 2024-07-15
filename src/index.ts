@@ -21,7 +21,7 @@ const rules = {
 const base = {
     meta: {
         name: "eslint-plugin-sort-keys-custom-order",
-        version: "2.0.1"
+        version: "2.0.2"
     },
     processors: {},
     rules
