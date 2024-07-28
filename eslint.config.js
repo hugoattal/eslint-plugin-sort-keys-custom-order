@@ -11,7 +11,6 @@ export default tsEslint.config(
             "sort-keys-custom-order": sortKeysCustomOrder
         },
         rules: {
-            "@typescript-eslint/type-annotation-spacing": ["error"],
             "array-bracket-spacing": ["error", "never"],
             "arrow-spacing": ["error"],
             "brace-style": ["error", "stroustrup"],

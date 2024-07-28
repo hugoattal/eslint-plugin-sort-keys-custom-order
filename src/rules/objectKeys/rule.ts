@@ -5,7 +5,7 @@ import { getFixer, getOrderFunction, getPropertyName, TNodeStack } from "@/lib";
 export function create(context: TSESLint.RuleContext<TMessageIds, TOptions>): TSESLint.RuleListener {
     let nodeStack: TNodeStack<TSESTree.Property>;
 
-    const isInOrder = getOrderFunction(context.options[0]?.orderedKeys);
+    const isInOrder = getOrderFunction(context.options[0]?.orderedKeys, context.options[0]?.sorting);
 
     return {
         ObjectExpression() {

@@ -43,17 +43,13 @@ export default [{
     /* ... */
     "rules": {
         // For JS objects sorting
-        "sort-keys-custom-order/object-keys": ["error", { "orderedKeys": [
-            "id",
-            "name",
-            "title"
-        ] }],
+        "sort-keys-custom-order/object-keys": [
+            "error", { "orderedKeys": ["id", "name", "title"] }
+        ],
         // For TS types sorting
-        "sort-keys-custom-order/type-keys": ["error", { "orderedKeys": [
-            "id",
-            "name",
-            "title"
-        ] }]
+        "sort-keys-custom-order/type-keys": [
+            "error", { "orderedKeys": ["id", "name", "title"] }
+        ]
     }
     /* ... */
 }]
@@ -71,6 +67,27 @@ export default [
     /* ... */
 ]
 ```
+
+## Configuration
+
+`orderedKeys: Array<string>` : You can pass an array of ordered keys to the rule configuration. The rule will sort the keys in the order you provided.
+
+`sorting: "asc" | "desc" | "none"` : You can pass the sorting order for the keys not in orderedKeys. Default is "asc".
+
+Example:
+
+```json
+{
+    "sort-keys-custom-order/object-keys": [
+        "error", 
+        { 
+            "orderedKeys": ["id","name","title"],
+            "sorting": "asc"
+        }
+    ]
+}
+```
+
 
 ## Supported Rules
 

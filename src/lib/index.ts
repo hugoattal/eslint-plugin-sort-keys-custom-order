@@ -1,6 +1,6 @@
 import { TSESLint, TSESTree } from "@typescript-eslint/utils";
 
-export function getOrderFunction(orderedKeys: Array<string> | undefined): (a: string, b: string) => boolean {
+export function getOrderFunction(orderedKeys: Array<string> | undefined, sorting: "asc" | "desc" | "none" | undefined): (a: string, b: string) => boolean {
     return (a: string, b: string) => {
         if (orderedKeys) {
             const isAOrderedKeys = orderedKeys.includes(a);
@@ -19,7 +19,15 @@ export function getOrderFunction(orderedKeys: Array<string> | undefined): (a: st
             }
         }
 
-        return a.toLowerCase() <= b.toLowerCase();
+        switch (sorting) {
+        case "desc":
+            return a.toLowerCase() >= b.toLowerCase();
+        case "none":
+            return true;
+        case "asc":
+        default:
+            return a.toLowerCase() <= b.toLowerCase();
+        }
     };
 }
 

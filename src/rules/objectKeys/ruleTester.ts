@@ -14,6 +14,10 @@ export const valid: Array<ValidTestCase<TOptions>> = [
         options: [{ orderedKeys: ["b", "a"] }]
     },
     {
+        code: "const a = {b:1,c:2,a:3}",
+        options: [{ orderedKeys: ["b"], sorting: "none" }]
+    },
+    {
         code: `const test ={
     async update({ name, password, username }: { name: string; password: { new: string; old: string }; username: string }) {
     }
@@ -43,6 +47,12 @@ export const invalid: Array<InvalidTestCase<TMessageIds, TOptions>> = [
         errors: [{ messageId: "object-keys-error" }],
         options: [{ orderedKeys: ["b", "a"] }],
         output: "const a = {b:2,a:1,c:3}"
+    },
+    {
+        code: "const a = {c:1,b:2,a:3}",
+        errors: [{ messageId: "object-keys-error" }],
+        options: [{ orderedKeys: ["b"], sorting: "none" }],
+        output: "const a = {b:2,c:1,a:3}"
     },
     {
         code: `const a = {
