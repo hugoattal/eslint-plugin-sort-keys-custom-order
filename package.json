@@ -1,6 +1,6 @@
 {
     "name": "eslint-plugin-sort-keys-custom-order",
-    "version": "2.1.0",
+    "version": "2.2.0",
     "description": "Enforce keys sorting on objects and TS types in a custom order with autofix",
     "type": "module",
     "author": {
@@ -30,29 +30,24 @@
         "./*": "./*"
     },
     "devDependencies": {
-        "@types/eslint": "^8.56.10",
-        "@types/estree": "^1.0.5",
-        "@types/jest": "^29.5.12",
-        "@types/node": "^20.14.10",
-        "@typescript-eslint/parser": "rc-v8",
-        "@typescript-eslint/rule-tester": "rc-v8",
-        "@typescript-eslint/utils": "rc-v8",
-        "@vitest/ui": "^2.0.2",
-        "eslint": "^9.7.0",
+        "@types/node": "^22.7.8",
+        "@typescript-eslint/rule-tester": "^8.11.0",
+        "@typescript-eslint/utils": "^8.11.0",
+        "@vitest/ui": "^2.1.3",
+        "eslint": "9.4.0",
         "eslint-import-resolver-alias": "^1.1.2",
-        "eslint-import-resolver-typescript": "^3.6.1",
-        "eslint-plugin-import-x": "^3.0.1",
+        "eslint-import-resolver-typescript": "^3.6.3",
+        "eslint-plugin-import-x": "^4.3.1",
         "eslint-plugin-sort-keys-custom-order": "file:",
-        "rollup-plugin-visualizer": "^5.12.0",
         "ts-node": "^10.9.2",
-        "typescript": "^5.5.3",
-        "typescript-eslint": "rc-v8",
-        "vite": "^5.3.3",
-        "vite-plugin-dts": "^3.9.1",
-        "vitest": "^2.0.2"
+        "typescript": "^5.6.3",
+        "typescript-eslint": "^8.11.0",
+        "vite": "^5.4.9",
+        "vite-plugin-dts": "^4.2.4",
+        "vitest": "^2.1.3"
     },
     "peerDependencies": {
-        "@typescript-eslint/utils": "^7.8.0 || ^8.0.0",
+        "@typescript-eslint/utils": "^8.0.0",
         "eslint": "^9.0.0"
     },
     "files": [
