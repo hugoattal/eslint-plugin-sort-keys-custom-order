@@ -52,7 +52,7 @@
         "vitest": "^2.0.2"
     },
     "peerDependencies": {
-        "@typescript-eslint/utils": "^7.8.0",
+        "@typescript-eslint/utils": "^7.8.0 || ^8.0.0",
         "eslint": "^9.0.0"
     },
     "files": [
