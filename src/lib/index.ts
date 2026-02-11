@@ -46,7 +46,7 @@ export function getFixer<TMessageIds extends string, TOptions extends readonly u
             return fixes;
         }
 
-        const sourceCode = context.getSourceCode();
+        const sourceCode = context.sourceCode;
         swapProperty<TProperty>(sourceCode, fixes, fixer, node, nodeStack.node);
 
         return fixes;
