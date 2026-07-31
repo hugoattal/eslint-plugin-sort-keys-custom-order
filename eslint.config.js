@@ -1,6 +1,7 @@
-import sortKeysCustomOrder from "eslint-plugin-sort-keys-custom-order";
 import tsEslint from "typescript-eslint";
 import importX from "eslint-plugin-import-x";
+import sortKeysCustomOrder from "eslint-plugin-sort-keys-custom-order";
+
 
 export default tsEslint.config(
     {
