@@ -4,6 +4,7 @@ import { create } from "./rule";
 import { createRule } from "@/utils";
 
 const meta: ESLintUtils.NamedCreateRuleMeta<TMessageIds> = {
+    defaultOptions: [],
     docs: {
         description: "Require export object keys to be sorted with custom order",
         url: "https://github.com/hugoattal/eslint-plugin-sort-keys-custom-order"
@@ -18,7 +19,6 @@ const meta: ESLintUtils.NamedCreateRuleMeta<TMessageIds> = {
 
 export const rule = createRule({
     create,
-    defaultOptions: [],
     meta,
     name: "export-object-keys"
 });
