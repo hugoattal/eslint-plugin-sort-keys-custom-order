@@ -56,7 +56,7 @@ Add the plugin's recommended preset to your flat configuration:
 import sortKeysCustomOrder from "eslint-plugin-sort-keys-custom-order";
 
 export default [
-    sortKeysCustomOrder.configs["flat/recommended"]
+    sortKeysCustomOrder.configs.recommended
 ];
 ```
 
@@ -69,7 +69,7 @@ To put selected object keys first, add a rule override after the preset:
 import sortKeysCustomOrder from "eslint-plugin-sort-keys-custom-order";
 
 export default [
-    sortKeysCustomOrder.configs["flat/recommended"],
+    sortKeysCustomOrder.configs.recommended,
     {
         rules: {
             "sort-keys-custom-order/object-keys": [
@@ -149,7 +149,7 @@ import sortKeysCustomOrder from "eslint-plugin-sort-keys-custom-order";
 import tsEslint from "typescript-eslint";
 
 export default [
-    sortKeysCustomOrder.configs["flat/recommended"],
+    sortKeysCustomOrder.configs.recommended,
     {
         files: ["**/*.ts", "**/*.tsx"],
         languageOptions: {
