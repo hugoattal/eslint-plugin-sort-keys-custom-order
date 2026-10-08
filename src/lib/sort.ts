@@ -1,5 +1,5 @@
 import type { TSESLint, TSESTree } from "@typescript-eslint/utils";
-import type { TOptions } from "./options";
+import type { TOptions, TSortingOptions } from "./options";
 import { getOrderFunction } from "./order";
 import { getSortedFix } from "./fix";
 
@@ -8,9 +8,10 @@ export function checkOrder<TNode extends TSESTree.Node, TMessageIds extends stri
     nodes: Array<TNode>,
     getName: (node: TNode) => string | undefined,
     messageId: TMessageIds,
-    canFix = true
+    canFix = true,
+    options: TSortingOptions = context.options[0] || {}
 ) {
-    const compare = getOrderFunction(context.options[0] || {});
+    const compare = getOrderFunction(options);
     let segment: Array<{ name: string, node: TNode }> = [];
     for (const node of nodes) {
         const name = getName(node);

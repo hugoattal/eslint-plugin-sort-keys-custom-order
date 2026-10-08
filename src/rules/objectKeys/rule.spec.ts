@@ -1,9 +1,34 @@
 import { RuleTester, type ValidTestCase, type InvalidTestCase } from "@typescript-eslint/rule-tester";
+import { TSESLint } from "@typescript-eslint/utils";
 import { rule, type TMessageIds } from "./index";
-import type { TOptions } from "@/lib/options";
+import type { TOptions } from "./options";
 import { expectSingleFix, expectInvalidOrderedKeys, expectFix, expectNoFix } from "@/testing/lint";
 
 const valid: Array<ValidTestCase<TOptions>> = [
+    {
+        code: "const a = { b: { foo: { z: 1, id: 2, a: 3 } } };",
+        options: [{ orderedKeys: ["id"], selectors: [{ target: { type: "property", name: "foo" }, orderedKeys: [], sorting: "none" }] }]
+    },
+    {
+        code: "bar({ z: 1, a: 2 });",
+        options: [{ selectors: [{ target: { type: "function", name: "bar" }, sorting: "none" }] }]
+    },
+    {
+        code: "const a = { foo: { z: { z: 1, a: 2 }, a: 3 } };",
+        options: [{ selectors: [{ target: { type: "property", name: "foo" }, mode: "recursive", sorting: "none" }] }]
+    },
+    {
+        code: "bar([{ z: { z: 1, a: 2 }, a: 3 }]);",
+        options: [{ selectors: [{ target: { type: "function", name: "bar" }, mode: "recursive", sorting: "none" }] }]
+    },
+    {
+        code: "const a = { foo: ({ z: 1, a: 2 } as const) satisfies Record<string, number> };",
+        options: [{ selectors: [{ target: { type: "property", name: "foo" }, sorting: "none" }] }]
+    },
+    {
+        code: "bar({ z: 1, a: 2 } as const, { z: 3, a: 4 });",
+        options: [{ selectors: [{ target: { type: "function", name: "bar" }, sorting: "none" }] }]
+    },
     {
         code: "const a = {a:1,b:2,c:3}"
     },
@@ -28,6 +53,78 @@ const valid: Array<ValidTestCase<TOptions>> = [
 ];
 
 const invalid: Array<InvalidTestCase<TMessageIds, TOptions>> = [
+    {
+        code: "bar({ name: 1, id: 2, z: 3, a: 4 });",
+        errors: [{ messageId: "object-keys-error" }],
+        options: [{ orderedKeys: ["name"], selectors: [{ target: { type: "function", name: "bar" }, orderedKeys: ["id"], sorting: "none" }] }],
+        output: "bar({ id: 2, name: 1, z: 3, a: 4 });"
+    },
+    {
+        code: "const a = { foo: { z: { z: 1, a: 2 }, a: 3 } };",
+        errors: [{ messageId: "object-keys-error" }],
+        options: [{ selectors: [{ target: { type: "property", name: "foo" }, mode: "direct", sorting: "none" }] }],
+        output: "const a = { foo: { z: { a: 2, z: 1 }, a: 3 } };"
+    },
+    {
+        code: "bar([{ z: 1, a: 2 }]);",
+        errors: [{ messageId: "object-keys-error" }],
+        options: [{ selectors: [{ target: { type: "function", name: "bar" }, sorting: "none" }] }],
+        output: "bar([{ a: 2, z: 1 }]);"
+    },
+    {
+        code: "const a = { foo: { z: 1, a: 2 }, other: { z: 1, a: 2 } };",
+        errors: [{ messageId: "object-keys-error" }],
+        options: [{ selectors: [{ target: { type: "property", name: "foo" }, sorting: "none" }] }],
+        output: "const a = { foo: { z: 1, a: 2 }, other: { a: 2, z: 1 } };"
+    },
+    {
+        code: "baz({ z: 1, a: 2 });",
+        errors: [{ messageId: "object-keys-error" }],
+        options: [{ selectors: [{ target: { type: "function", name: "bar" }, mode: "recursive", sorting: "none" }] }],
+        output: "baz({ a: 2, z: 1 });"
+    },
+    {
+        code: "const a = { foo: { z: 1, id: 2, a: 3 } };",
+        errors: [{ messageId: "object-keys-error" }],
+        options: [{ orderedKeys: ["id"], selectors: [{ target: { type: "property", name: "foo" }, sorting: "none" }] }],
+        output: "const a = { foo: { id: 2, z: 1, a: 3 } };"
+    },
+    {
+        code: 'const a = { "foo": { z: 1, a: 2 }, ["foo"]: { z: 1, a: 2 } };',
+        errors: [{ messageId: "object-keys-error" }, { messageId: "object-keys-error" }],
+        options: [{ sorting: "none", selectors: [{ target: { type: "property", name: "foo" }, sorting: "asc" }] }],
+        output: 'const a = { "foo": { a: 2, z: 1 }, ["foo"]: { a: 2, z: 1 } };'
+    },
+    {
+        code: "const a = { [foo]: { z: 1, a: 2 } };",
+        errors: [{ messageId: "object-keys-error" }],
+        options: [{ selectors: [{ target: { type: "property", name: "foo" }, sorting: "none" }] }],
+        output: "const a = { [foo]: { a: 2, z: 1 } };"
+    },
+    {
+        code: "const a = { foo: { inner: { z: 1, a: 2 } } };",
+        errors: [{ messageId: "object-keys-error" }],
+        options: [{ selectors: [
+            { target: { type: "property", name: "foo" }, mode: "recursive", sorting: "none" },
+            { target: { type: "property", name: "inner" }, sorting: "asc" }
+        ] }],
+        output: "const a = { foo: { inner: { a: 2, z: 1 } } };"
+    },
+    {
+        code: "bar({ a: 1, z: 2 });",
+        errors: [{ messageId: "object-keys-error" }],
+        options: [{ selectors: [
+            { target: { type: "function", name: "bar" }, sorting: "desc" },
+            { target: { type: "function", name: "bar" }, sorting: "asc" }
+        ] }],
+        output: "bar({ z: 2, a: 1 });"
+    },
+    {
+        code: "bar({ a: next(), id: next() });",
+        errors: [{ messageId: "object-keys-error" }],
+        options: [{ selectors: [{ target: { type: "function", name: "bar" }, orderedKeys: ["id"], sorting: "none" }] }],
+        output: null
+    },
     {
         code: "const a = {b:2,a:1,c:3}",
         errors: [{ messageId: "object-keys-error" }],
@@ -201,6 +298,22 @@ describe("object-keys", () => {
     });
 
     describe("option validation", () => {
+        it.each([
+            { sorting: "none" },
+            { target: { type: "unknown", name: "foo" } },
+            { target: { type: "property" } },
+            { target: { type: "property", name: 123 } },
+            { target: { type: "property", name: "foo" }, mode: "unknown" },
+            { target: { type: "property", name: "foo" }, orderedKeys: ["id", "id"] },
+            { target: { type: "property", name: "foo" }, orderedKeys: [123] }
+        ])("rejects invalid selectors: %j", selector => {
+            const linter = new TSESLint.Linter();
+            expect(() => linter.verify("const value = {};", [{
+                plugins: { sorting: { rules: { "object-keys": rule } } },
+                rules: { "sorting/object-keys": ["error", { selectors: [selector] }] }
+            }])).toThrow();
+        });
+
         it("rejects non-string and duplicate orderedKeys", () => {
             expectInvalidOrderedKeys("object-keys");
         });

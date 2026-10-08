@@ -1,5 +1,5 @@
 import { ESLintUtils } from "@typescript-eslint/utils";
-import { properties, TOptions } from "@/lib/options";
+import { objectProperties, type TOptions } from "./options";
 import { create } from "./rule";
 import { createRule } from "@/utils";
 
@@ -15,7 +15,7 @@ const meta: ESLintUtils.NamedCreateRuleMeta<TMessageIds, unknown, TOptions> = {
     messages: {
         "object-keys-error": "Expected object keys to be in correct order. '{{thisName}}' should be before '{{prevName}}'."
     },
-    schema: [properties],
+    schema: [objectProperties],
     type: "suggestion"
 };
 
