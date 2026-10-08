@@ -7,7 +7,7 @@ export type TSortingOptions = {
 
 export type TOptions = [TSortingOptions?];
 
-export const properties: JSONSchema.JSONSchema4 = {
+export const properties: JSONSchema.JSONSchema4ObjectSchema = {
     additionalProperties: false,
     properties: {
         orderedKeys: {

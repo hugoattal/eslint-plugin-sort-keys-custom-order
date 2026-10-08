@@ -15,7 +15,7 @@ export type TObjectSortingOptions = TSortingOptions & {
 
 export type TOptions = [TObjectSortingOptions?];
 
-export const objectProperties: JSONSchema.JSONSchema4 = {
+export const objectProperties: JSONSchema.JSONSchema4ObjectSchema = {
     ...properties,
     properties: {
         ...properties.properties,
