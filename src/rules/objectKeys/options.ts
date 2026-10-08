@@ -10,6 +10,7 @@ export type TSelector = TSortingOptions & {
 };
 
 export type TObjectSortingOptions = TSortingOptions & {
+    autofix?: "safe" | "unsafe",
     selectors?: Array<TSelector>
 };
 
@@ -19,6 +20,11 @@ export const objectProperties: JSONSchema.JSONSchema4ObjectSchema = {
     ...properties,
     properties: {
         ...properties.properties,
+        autofix: {
+            default: "unsafe",
+            enum: ["safe", "unsafe"],
+            type: "string"
+        },
         selectors: {
             items: {
                 ...properties,

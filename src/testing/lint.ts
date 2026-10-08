@@ -1,11 +1,11 @@
 import { TSESLint } from "@typescript-eslint/utils";
 import tsEslint from "typescript-eslint";
 import plugin from "../index";
-import type { TSortingOptions } from "../lib/options";
+import type { TObjectSortingOptions } from "../rules/objectKeys/options";
 
 type TRuleName = keyof typeof plugin.rules;
 
-function getConfig(ruleName: TRuleName, options: TSortingOptions): Array<TSESLint.FlatConfig.Config> {
+function getConfig(ruleName: TRuleName, options: TObjectSortingOptions): Array<TSESLint.FlatConfig.Config> {
     return [{
         languageOptions: { parser: tsEslint.parser },
         plugins: { sorting: plugin },
@@ -13,7 +13,7 @@ function getConfig(ruleName: TRuleName, options: TSortingOptions): Array<TSESLin
     }];
 }
 
-export function expectFix(ruleName: TRuleName, code: string, expected: string, options: TSortingOptions = {}) {
+export function expectFix(ruleName: TRuleName, code: string, expected: string, options: TObjectSortingOptions = {}) {
     const linter = new TSESLint.Linter();
     const config = getConfig(ruleName, options);
     const result = linter.verifyAndFix(code, config, {});
@@ -22,8 +22,8 @@ export function expectFix(ruleName: TRuleName, code: string, expected: string, o
     expect(linter.verifyAndFix(result.output, config, {}).fixed).toBe(false);
 }
 
-export function expectNoFix(ruleName: TRuleName, code: string) {
-    const result = new TSESLint.Linter().verifyAndFix(code, getConfig(ruleName, {}), {});
+export function expectNoFix(ruleName: TRuleName, code: string, options: TObjectSortingOptions = {}) {
+    const result = new TSESLint.Linter().verifyAndFix(code, getConfig(ruleName, options), {});
     expect(result.output).toBe(code);
     expect(result.fixed).toBe(false);
     expect(result.messages.some(message => message.ruleId === `sorting/${ruleName}`)).toBe(true);

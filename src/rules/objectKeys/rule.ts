@@ -7,18 +7,18 @@ import { checkOrder } from "@/lib/sort";
 export function create(context: TSESLint.RuleContext<TMessageIds, TOptions>): TSESLint.RuleListener {
     return {
         ObjectExpression(node) {
-            const canFix = node.properties.every(property => {
+            const options = getOptions(node, context.options[0] || {});
+            const canFix = options.autofix !== "safe" || node.properties.every(property => {
                 if (property.type !== TSESTree.AST_NODE_TYPES.Property) {
                     return true;
                 }
                 return isSafeInitializer(property.value);
             });
-            const options = getOptions(node, context.options[0] || {});
             checkOrder(context, node.properties, getName, "object-keys-error", canFix, options);
         },
         ObjectPattern(node) {
             // Defaults and getters can depend on destructuring evaluation order.
-            checkOrder(context, node.properties, getName, "object-keys-error", false);
+            checkOrder(context, node.properties, getName, "object-keys-error", context.options[0]?.autofix !== "safe");
         }
     };
 }

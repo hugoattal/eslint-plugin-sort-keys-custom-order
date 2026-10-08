@@ -2,7 +2,7 @@
 
 Keep your most important keys first, and let ESLint sort the rest.
 
-Sort JavaScript object properties, TypeScript type properties, and named imports and exports with a custom priority list. Put keys like `id` and `name` at the top, choose how the remaining keys are ordered, and apply safe changes with autofix.
+Sort JavaScript object properties, TypeScript type properties, and named imports and exports with a custom priority list. Put keys like `id` and `name` at the top, choose how the remaining keys are ordered, and apply changes with autofix.
 
 With `orderedKeys: ["id", "name"]`, this object:
 
@@ -278,7 +278,7 @@ The `layout` object's keys stay in their original order. Its nested object uses 
 - If multiple selectors match that target, the first eligible selector in the array wins.
 - Omitted `orderedKeys` or `sorting` values inherit the rule's global options, rather than an enclosing selector's options.
 - Unmatched object literals and all destructuring patterns use the global options.
-- Selectors change sorting preferences; autofix safety restrictions still apply.
+- Selectors change sorting preferences; the rule's `autofix` mode still applies.
 
 ## Autofix behavior
 
@@ -302,9 +302,22 @@ The spread stays in place, and each side is sorted independently. TypeScript met
 
 TypeScript modifiers, optional markers, brackets, and member comments move with their property. Separators remain at their original positions.
 
-### Cases that require manual changes
+### Safe and unsafe autofix
 
-The plugin reports ordering issues without an automatic fix when reordering could affect evaluation:
+The `object-keys` rule accepts `autofix: "safe" | "unsafe"`, defaulting to `"unsafe"`. Unsafe mode fixes object literals and destructuring even when reordering may change evaluation order, including calls, member reads, and default values. Sortable boundaries still apply in both modes.
+
+To preserve the previous safety restrictions, set `autofix: "safe"`:
+
+```js
+"sort-keys-custom-order/object-keys": [
+    "error",
+    { orderedKeys: ["id", "name"], autofix: "safe" }
+]
+```
+
+Place this rule entry inside your configuration's `rules` object. The option applies to the whole rule, including objects matched by selectors; it is not a selector option. Type, import, and export rules do not need this option.
+
+In safe mode, the plugin reports ordering issues without an automatic fix when reordering could affect evaluation:
 
 - **Object destructuring:** default values and getter reads can depend on the order in which properties are accessed.
 - **Object literals with potentially unsafe initializers:** calls, member reads, updates, and other expressions that may execute user code prevent autofix for that object.

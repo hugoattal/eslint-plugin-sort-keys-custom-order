@@ -122,7 +122,7 @@ const invalid: Array<InvalidTestCase<TMessageIds, TOptions>> = [
     {
         code: "bar({ a: next(), id: next() });",
         errors: [{ messageId: "object-keys-error" }],
-        options: [{ selectors: [{ target: { type: "function", name: "bar" }, orderedKeys: ["id"], sorting: "none" }] }],
+        options: [{ autofix: "safe", selectors: [{ target: { type: "function", name: "bar" }, orderedKeys: ["id"], sorting: "none" }] }],
         output: null
     },
     {
@@ -230,11 +230,11 @@ describe("object-keys", () => {
         });
 
         it("reports destructuring without changing default evaluation order", () => {
-            expectNoFix("object-keys", "const { b = 1, a = b } = {};");
+            expectNoFix("object-keys", "const { b = 1, a = b } = {};", { autofix: "safe" });
         });
 
         it("does not reorder destructuring getter reads", () => {
-            expectNoFix("object-keys", "const { b, a } = source;");
+            expectNoFix("object-keys", "const { b, a } = source;", { autofix: "safe" });
         });
 
         it.each([
@@ -244,11 +244,24 @@ describe("object-keys", () => {
             "const value = { b: { value: next() }, a: 1 };",
             "const value = { b: [...source], a: 1 };"
         ])("withholds fixes for side effects: %s", code => {
-            expectNoFix("object-keys", code);
+            expectNoFix("object-keys", code, { autofix: "safe" });
+        });
+
+        it.each([
+            ["const value = { b: next(), a: next() };", "const value = { a: next(), b: next() };"],
+            ["const value = { b: source.value, a: 1 };", "const value = { a: 1, b: source.value };"],
+            ["const value = { b: ++counter, a: 1 };", "const value = { a: 1, b: ++counter };"],
+            ["const value = { b: { value: next() }, a: 1 };", "const value = { a: 1, b: { value: next() } };"],
+            ["const value = { b: [...source], a: 1 };", "const value = { a: 1, b: [...source] };"],
+            ["const { b = 1, a = b } = {};", "const { a = b, b = 1 } = {};"],
+            ["const { b, a } = source;", "const { a, b } = source;"]
+        ])("fixes with unsafe autofix by default: %s", (code, expected) => {
+            expectFix("object-keys", code, expected);
+            expectFix("object-keys", code, expected, { autofix: "unsafe" });
         });
 
         it("still sorts function and literal initializers", () => {
-            expectFix("object-keys", "const value = { b: () => next(), a: [1, 2] };", "const value = { a: [1, 2], b: () => next() };");
+            expectFix("object-keys", "const value = { b: () => next(), a: [1, 2] };", "const value = { a: [1, 2], b: () => next() };", { autofix: "safe" });
         });
 
         it("sorts nested containers independently", () => {
@@ -298,6 +311,14 @@ describe("object-keys", () => {
     });
 
     describe("option validation", () => {
+        it("rejects invalid autofix modes", () => {
+            const linter = new TSESLint.Linter();
+            expect(() => linter.verify("const value = {};", [{
+                plugins: { sorting: { rules: { "object-keys": rule } } },
+                rules: { "sorting/object-keys": ["error", { autofix: "unknown" }] }
+            }])).toThrow();
+        });
+
         it.each([
             { sorting: "none" },
             { target: { type: "unknown", name: "foo" } },
