@@ -1,6 +1,5 @@
 {
     "compilerOptions": {
-        "baseUrl": ".",
         "paths": {
             "@/*": [
                 "./src/*"
@@ -15,6 +14,7 @@
         "target": "esnext",
         "module": "esnext",
         "moduleResolution": "bundler",
+        "resolveJsonModule": true,
         "esModuleInterop": true
     },
     "include": [

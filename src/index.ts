@@ -1,4 +1,4 @@
-import { ConfigWithExtends } from "typescript-eslint";
+import packageDefinition from "../package.json" with { type: "json" };
 import { rule as objectKeysRule } from "./rules/objectKeys";
 import { rule as typeKeysRule } from "./rules/typeKeys";
 import { rule as importObjectKeysRule } from "./rules/importObject";
@@ -21,7 +21,7 @@ const rules = {
 const base = {
     meta: {
         name: "eslint-plugin-sort-keys-custom-order",
-        version: "2.0.2"
+        version: packageDefinition.version
     },
     processors: {},
     rules

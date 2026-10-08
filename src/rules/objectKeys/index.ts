@@ -1,9 +1,11 @@
 import { ESLintUtils } from "@typescript-eslint/utils";
-import { TMessageIds, properties } from "./properties";
+import { properties, TOptions } from "@/lib/options";
 import { create } from "./rule";
 import { createRule } from "@/utils";
 
-const meta: ESLintUtils.NamedCreateRuleMeta<TMessageIds> = {
+export type TMessageIds = "object-keys-error";
+
+const meta: ESLintUtils.NamedCreateRuleMeta<TMessageIds, unknown, TOptions> = {
     defaultOptions: [],
     docs: {
         description: "Require object keys to be sorted with custom order",

@@ -1,79 +1,23 @@
 import { TSESLint, TSESTree } from "@typescript-eslint/utils";
-import { TMessageIds, TOptions } from "./properties";
-import { getFixer, getOrderFunction, getPropertyName, TNodeStack } from "@/lib";
+import type { TMessageIds } from "./index";
+import type { TOptions } from "@/lib/options";
+import { getPropertyName } from "@/lib/property";
+import { checkOrder } from "@/lib/sort";
 
 export function create(context: TSESLint.RuleContext<TMessageIds, TOptions>): TSESLint.RuleListener {
-    let nodeStack: TNodeStack<TSESTree.TSPropertySignature>;
-
-    const isInOrder = getOrderFunction(context.options[0]?.orderedKeys, context.options[0]?.sorting);
-
     return {
-        TSInterfaceDeclaration() {
-            nodeStack = {
-                name: undefined,
-                node: undefined,
-                upper: nodeStack
-            };
+        TSInterfaceBody(node) {
+            checkOrder(context, node.body, getName, "type-keys-error");
         },
-        "TSInterfaceDeclaration:exit"() {
-            if (!nodeStack) {
-                return;
-            }
-
-            nodeStack = nodeStack.upper;
-        },
-        TSPropertySignature(node) {
-            if (!nodeStack) {
-                return;
-            }
-
-            const prevNodeStack: TNodeStack<TSESTree.TSPropertySignature> = {
-                name: nodeStack.name,
-                node: nodeStack.node,
-                upper: nodeStack
-            };
-
-            const thisName = getPropertyName(node);
-
-            if (thisName) {
-                nodeStack.name = thisName;
-                nodeStack.node = node || prevNodeStack.node;
-            }
-
-            if (!prevNodeStack.name || !thisName) {
-                return;
-            }
-
-            if (!isInOrder(prevNodeStack.name, thisName)) {
-                if (!node.key.loc) {
-                    return;
-                }
-
-                context.report({
-                    data: {
-                        prevName: prevNodeStack.name,
-                        thisName
-                    },
-                    fix: getFixer(node, prevNodeStack, context),
-                    loc: node.key.loc,
-                    messageId: "type-keys-error",
-                    node
-                });
-            }
-        },
-        TSTypeLiteral() {
-            nodeStack = {
-                name: undefined,
-                node: undefined,
-                upper: nodeStack
-            };
-        },
-        "TSTypeLiteral:exit"() {
-            if (!nodeStack) {
-                return;
-            }
-
-            nodeStack = nodeStack.upper;
+        TSTypeLiteral(node) {
+            checkOrder(context, node.members, getName, "type-keys-error");
         }
     };
+}
+
+function getName(node: TSESTree.TypeElement) {
+    if (node.type !== TSESTree.AST_NODE_TYPES.TSPropertySignature) {
+        return;
+    }
+    return getPropertyName(node);
 }

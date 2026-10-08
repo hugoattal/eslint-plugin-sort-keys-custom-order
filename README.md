@@ -19,7 +19,7 @@ $ npm install -D eslint-plugin-sort-keys-custom-order
 
 ## Usage
 
-Add `sort-keys-custom-order` to the plugins section of your `.eslintrc` configuration file. You can omit the `eslint-plugin-` prefix:
+Register the plugin in your ESLint flat configuration (`eslint.config.js`):
 
 ```js
 // eslint.config.js
@@ -38,7 +38,7 @@ export default [{
 Then configure the rules you want to use under the rules section.
 
 ```js
-// .eslintrc.js
+// eslint.config.js
 export default [{
     /* ... */
     "rules": {
@@ -70,7 +70,7 @@ export default [
 
 ## Configuration
 
-`orderedKeys: Array<string>` : You can pass an array of ordered keys to the rule configuration. The rule will sort the keys in the order you provided.
+`orderedKeys: Array<string>` : You can pass an array of unique string keys to the rule configuration. The rule will sort the keys in the order you provided.
 
 `sorting: "asc" | "desc" | "none"` : You can pass the sorting order for the keys not in orderedKeys. Default is "asc".
 
@@ -137,3 +137,15 @@ const module = {
 ```
 
 
+
+## Autofix safety
+
+Sorting is stable: keys with equal priority retain their original order. Each sortable segment is fixed in one replacement, including long lists.
+
+Spreads, unknown computed keys, and unsupported TypeScript members separate sortable segments. Properties are never moved across these boundaries. TypeScript modifiers, optional markers, brackets, and member comments move with their property; separators remain at their original positions.
+
+Object destructuring is reported but never automatically reordered, because defaults and getter reads can depend on evaluation order. Object literals with initializers that may execute user code (including calls, member reads, and updates) are also reported without an automatic fix. Literal values, identifiers, arrays of safe values, and function definitions can be reordered.
+
+## Development
+
+Run `npm test -- --run` for the rule and regression tests. Run `npm run build` to generate the ESM/CommonJS bundles and declarations. Packaging runs the build automatically through `prepack`; test declarations are excluded from the published output.
