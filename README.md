@@ -191,6 +191,7 @@ All four rules accept the same base options:
 | --- | --- | --- | --- |
 | `orderedKeys` | Array of unique strings | `[]` | Places listed keys first, in the exact order provided |
 | `sorting` | `"asc"`, `"desc"`, or `"none"` | `"asc"` | Controls the order of keys not listed in `orderedKeys` |
+| `ignore` | Array of glob patterns | `[]` | Skips files whose path matches any pattern, such as `"folder/**/*.json"` |
 
 Priority matching is case-sensitive. Alphabetical sorting is case-insensitive, uses string comparison, and preserves the original order of names that compare equally.
 
@@ -207,6 +208,19 @@ For an initial key order of `z, name, a, id, b`:
 `sorting: "none"` keeps unlisted keys in their original relative order. Keys in `orderedKeys` still move to the front. Use an empty priority list with `"none"` to leave all keys in their original order.
 
 These examples assume a single sortable segment. [Boundaries](#sortable-boundaries) can prevent keys from moving across part of a declaration.
+
+### Ignoring files
+
+`ignore` patterns are matched against the file path relative to ESLint's working directory, using forward slashes. A rule does not check files that match:
+
+```js
+"sort-keys-custom-order/object-keys": [
+    "error",
+    { orderedKeys: ["id"], ignore: ["folder/**/*.json", "src/generated/**"] }
+]
+```
+
+`ignore` is set per rule, so add it to each rule that should skip those files. It is not a selector option.
 
 ## Object selectors
 

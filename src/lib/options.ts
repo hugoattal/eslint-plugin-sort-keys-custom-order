@@ -5,9 +5,13 @@ export type TSortingOptions = {
     sorting?: "asc" | "desc" | "none"
 };
 
-export type TOptions = [TSortingOptions?];
+export type TRuleOptions = TSortingOptions & {
+    ignore?: Array<string>
+};
 
-export const properties: JSONSchema.JSONSchema4ObjectSchema = {
+export type TOptions = [TRuleOptions?];
+
+export const sortingProperties: JSONSchema.JSONSchema4ObjectSchema = {
     additionalProperties: false,
     properties: {
         orderedKeys: {
@@ -21,4 +25,15 @@ export const properties: JSONSchema.JSONSchema4ObjectSchema = {
         }
     },
     type: "object"
+};
+
+export const properties: JSONSchema.JSONSchema4ObjectSchema = {
+    ...sortingProperties,
+    properties: {
+        ...sortingProperties.properties,
+        ignore: {
+            items: { type: "string" },
+            type: "array"
+        }
+    }
 };

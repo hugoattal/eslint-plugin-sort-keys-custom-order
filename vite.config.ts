@@ -11,10 +11,11 @@ export default defineConfig({
             name: "eslint-plugin-sort-keys-custom-order"
         },
         rollupOptions: {
-            external: Object.keys(packageDefinition.peerDependencies),
+            external: [...Object.keys(packageDefinition.peerDependencies), "node:path"],
             output: {
                 globals: {
-                    "@typescript-eslint/utils": "typescriptEslintUtils"
+                    "@typescript-eslint/utils": "typescriptEslintUtils",
+                    "node:path": "path"
                 }
             }
         },

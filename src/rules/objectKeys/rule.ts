@@ -2,9 +2,13 @@ import { TSESLint, TSESTree } from "@typescript-eslint/utils";
 import type { TMessageIds } from "./index";
 import type { TOptions, TObjectSortingOptions, TSelector } from "./options";
 import { getPropertyName, isSafeInitializer } from "@/lib/property";
+import { isIgnored } from "@/lib/ignore";
 import { checkOrder } from "@/lib/sort";
 
 export function create(context: TSESLint.RuleContext<TMessageIds, TOptions>): TSESLint.RuleListener {
+    if (isIgnored(context)) {
+        return {};
+    }
     return {
         ObjectExpression(node) {
             const options = getOptions(node, context.options[0] || {});

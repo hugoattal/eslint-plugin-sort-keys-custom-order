@@ -2,9 +2,13 @@ import { TSESLint, TSESTree } from "@typescript-eslint/utils";
 import type { TMessageIds } from "./index";
 import type { TOptions } from "@/lib/options";
 import { getPropertyName } from "@/lib/property";
+import { isIgnored } from "@/lib/ignore";
 import { checkOrder } from "@/lib/sort";
 
 export function create(context: TSESLint.RuleContext<TMessageIds, TOptions>): TSESLint.RuleListener {
+    if (isIgnored(context)) {
+        return {};
+    }
     return {
         TSInterfaceBody(node) {
             checkOrder(context, node.body, getName, "type-keys-error");

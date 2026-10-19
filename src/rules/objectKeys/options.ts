@@ -1,5 +1,5 @@
 import type { JSONSchema } from "@typescript-eslint/utils";
-import { properties, type TSortingOptions } from "@/lib/options";
+import { properties, sortingProperties, type TRuleOptions, type TSortingOptions } from "@/lib/options";
 
 export type TSelector = TSortingOptions & {
     mode?: "direct" | "recursive",
@@ -9,7 +9,7 @@ export type TSelector = TSortingOptions & {
     }
 };
 
-export type TObjectSortingOptions = TSortingOptions & {
+export type TObjectSortingOptions = TRuleOptions & {
     autofix?: "safe" | "unsafe",
     selectors?: Array<TSelector>
 };
@@ -27,9 +27,9 @@ export const objectProperties: JSONSchema.JSONSchema4ObjectSchema = {
         },
         selectors: {
             items: {
-                ...properties,
+                ...sortingProperties,
                 properties: {
-                    ...properties.properties,
+                    ...sortingProperties.properties,
                     mode: { enum: ["direct", "recursive"], type: "string" },
                     target: {
                         additionalProperties: false,
