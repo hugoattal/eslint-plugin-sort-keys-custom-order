@@ -258,10 +258,12 @@ Place this rule entry inside your configuration's `rules` object.
 | --- | --- |
 | `target: { type: "property", name: "layout" }` | Values of properties named `layout`, at any nesting depth |
 | `target: { type: "function", name: "defineRecord" }` | Any argument of a direct call to `defineRecord(...)` |
+| `target: { type: "function", name: "foo.bar" }` | Any argument of a member call to `foo.bar(...)` |
+| `target: { type: "function", name: "foo.bar", argument: 0 }` | Only the first argument of `foo.bar(...)` |
 | `mode: "direct"` (default) | Only an object that is itself the property value or function argument |
 | `mode: "recursive"` | That object and object literals nested anywhere within the value or argument, including inside arrays |
 
-Property targets support identifier keys, quoted keys, and statically known computed keys. Dynamic computed keys do not match. Function targets match identifier calls such as `defineRecord(...)`; member calls such as `api.defineRecord(...)` do not match.
+Property targets support identifier keys, quoted keys, and statically known computed keys. Dynamic computed keys do not match. Function targets match identifier calls such as `defineRecord(...)` and, with a dotted name, member calls such as `api.defineRecord(...)` (`name: "api.defineRecord"`). Each segment must be a plain identifier: computed access such as `api["defineRecord"](...)` does not match. The optional `argument` index (from 0) restricts a function target to a single argument.
 
 TypeScript assertions, non-null assertions, and `satisfies` expressions do not interfere with direct matching.
 

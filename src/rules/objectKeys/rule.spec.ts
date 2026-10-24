@@ -1,33 +1,45 @@
 import { RuleTester, type ValidTestCase, type InvalidTestCase } from "@typescript-eslint/rule-tester";
 import { TSESLint } from "@typescript-eslint/utils";
-import { rule, type TMessageIds } from "./index";
 import type { TOptions } from "./options";
+import { rule, type TMessageIds } from "./index";
 import { expectSingleFix, expectInvalidOrderedKeys, expectFix, expectNoFix } from "@/testing/lint";
 
 const valid: Array<ValidTestCase<TOptions>> = [
     {
+        code: "foo.bar({ z: 1, a: 2 });",
+        options: [{ selectors: [{ sorting: "none", target: { name: "foo.bar", type: "function" } }] }]
+    },
+    {
+        code: "a.b.c({ z: 1, a: 2 });",
+        options: [{ selectors: [{ sorting: "none", target: { name: "a.b.c", type: "function" } }] }]
+    },
+    {
+        code: "foo.bar({ z: 1, a: 2 }, { a: 1, z: 2 });",
+        options: [{ selectors: [{ sorting: "none", target: { argument: 0, name: "foo.bar", type: "function" } }] }]
+    },
+    {
         code: "const a = { b: { foo: { z: 1, id: 2, a: 3 } } };",
-        options: [{ orderedKeys: ["id"], selectors: [{ target: { type: "property", name: "foo" }, orderedKeys: [], sorting: "none" }] }]
+        options: [{ orderedKeys: ["id"], selectors: [{ orderedKeys: [], sorting: "none", target: { name: "foo", type: "property" } }] }]
     },
     {
         code: "bar({ z: 1, a: 2 });",
-        options: [{ selectors: [{ target: { type: "function", name: "bar" }, sorting: "none" }] }]
+        options: [{ selectors: [{ sorting: "none", target: { name: "bar", type: "function" } }] }]
     },
     {
         code: "const a = { foo: { z: { z: 1, a: 2 }, a: 3 } };",
-        options: [{ selectors: [{ target: { type: "property", name: "foo" }, mode: "recursive", sorting: "none" }] }]
+        options: [{ selectors: [{ mode: "recursive", sorting: "none", target: { name: "foo", type: "property" } }] }]
     },
     {
         code: "bar([{ z: { z: 1, a: 2 }, a: 3 }]);",
-        options: [{ selectors: [{ target: { type: "function", name: "bar" }, mode: "recursive", sorting: "none" }] }]
+        options: [{ selectors: [{ mode: "recursive", sorting: "none", target: { name: "bar", type: "function" } }] }]
     },
     {
         code: "const a = { foo: ({ z: 1, a: 2 } as const) satisfies Record<string, number> };",
-        options: [{ selectors: [{ target: { type: "property", name: "foo" }, sorting: "none" }] }]
+        options: [{ selectors: [{ sorting: "none", target: { name: "foo", type: "property" } }] }]
     },
     {
         code: "bar({ z: 1, a: 2 } as const, { z: 3, a: 4 });",
-        options: [{ selectors: [{ target: { type: "function", name: "bar" }, sorting: "none" }] }]
+        options: [{ selectors: [{ sorting: "none", target: { name: "bar", type: "function" } }] }]
     },
     {
         code: "const a = {a:1,b:2,c:3}"
@@ -54,59 +66,83 @@ const valid: Array<ValidTestCase<TOptions>> = [
 
 const invalid: Array<InvalidTestCase<TMessageIds, TOptions>> = [
     {
+        code: "foo.bar({ z: 1, a: 2 }, { z: 1, a: 2 });",
+        errors: [{ messageId: "object-keys-error" }],
+        options: [{ selectors: [{ sorting: "none", target: { argument: 0, name: "foo.bar", type: "function" } }] }],
+        output: "foo.bar({ z: 1, a: 2 }, { a: 2, z: 1 });"
+    },
+    {
+        code: "Other.object({ z: 1, a: 2 });",
+        errors: [{ messageId: "object-keys-error" }],
+        options: [{ selectors: [{ sorting: "none", target: { name: "foo.bar", type: "function" } }] }],
+        output: "Other.object({ a: 2, z: 1 });"
+    },
+    {
+        code: "object({ z: 1, a: 2 });",
+        errors: [{ messageId: "object-keys-error" }],
+        options: [{ selectors: [{ sorting: "none", target: { name: "foo.bar", type: "function" } }] }],
+        output: "object({ a: 2, z: 1 });"
+    },
+    {
+        code: "foo[\"bar\"]({ z: 1, a: 2 });",
+        errors: [{ messageId: "object-keys-error" }],
+        options: [{ selectors: [{ sorting: "none", target: { name: "foo.bar", type: "function" } }] }],
+        output: "foo[\"bar\"]({ a: 2, z: 1 });"
+    },
+    {
         code: "bar({ name: 1, id: 2, z: 3, a: 4 });",
         errors: [{ messageId: "object-keys-error" }],
-        options: [{ orderedKeys: ["name"], selectors: [{ target: { type: "function", name: "bar" }, orderedKeys: ["id"], sorting: "none" }] }],
+        options: [{ orderedKeys: ["name"], selectors: [{ orderedKeys: ["id"], sorting: "none", target: { name: "bar", type: "function" } }] }],
         output: "bar({ id: 2, name: 1, z: 3, a: 4 });"
     },
     {
         code: "const a = { foo: { z: { z: 1, a: 2 }, a: 3 } };",
         errors: [{ messageId: "object-keys-error" }],
-        options: [{ selectors: [{ target: { type: "property", name: "foo" }, mode: "direct", sorting: "none" }] }],
+        options: [{ selectors: [{ mode: "direct", sorting: "none", target: { name: "foo", type: "property" } }] }],
         output: "const a = { foo: { z: { a: 2, z: 1 }, a: 3 } };"
     },
     {
         code: "bar([{ z: 1, a: 2 }]);",
         errors: [{ messageId: "object-keys-error" }],
-        options: [{ selectors: [{ target: { type: "function", name: "bar" }, sorting: "none" }] }],
+        options: [{ selectors: [{ sorting: "none", target: { name: "bar", type: "function" } }] }],
         output: "bar([{ a: 2, z: 1 }]);"
     },
     {
         code: "const a = { foo: { z: 1, a: 2 }, other: { z: 1, a: 2 } };",
         errors: [{ messageId: "object-keys-error" }],
-        options: [{ selectors: [{ target: { type: "property", name: "foo" }, sorting: "none" }] }],
+        options: [{ selectors: [{ sorting: "none", target: { name: "foo", type: "property" } }] }],
         output: "const a = { foo: { z: 1, a: 2 }, other: { a: 2, z: 1 } };"
     },
     {
         code: "baz({ z: 1, a: 2 });",
         errors: [{ messageId: "object-keys-error" }],
-        options: [{ selectors: [{ target: { type: "function", name: "bar" }, mode: "recursive", sorting: "none" }] }],
+        options: [{ selectors: [{ mode: "recursive", sorting: "none", target: { name: "bar", type: "function" } }] }],
         output: "baz({ a: 2, z: 1 });"
     },
     {
         code: "const a = { foo: { z: 1, id: 2, a: 3 } };",
         errors: [{ messageId: "object-keys-error" }],
-        options: [{ orderedKeys: ["id"], selectors: [{ target: { type: "property", name: "foo" }, sorting: "none" }] }],
+        options: [{ orderedKeys: ["id"], selectors: [{ sorting: "none", target: { name: "foo", type: "property" } }] }],
         output: "const a = { foo: { id: 2, z: 1, a: 3 } };"
     },
     {
-        code: 'const a = { "foo": { z: 1, a: 2 }, ["foo"]: { z: 1, a: 2 } };',
+        code: "const a = { \"foo\": { z: 1, a: 2 }, [\"foo\"]: { z: 1, a: 2 } };",
         errors: [{ messageId: "object-keys-error" }, { messageId: "object-keys-error" }],
-        options: [{ sorting: "none", selectors: [{ target: { type: "property", name: "foo" }, sorting: "asc" }] }],
-        output: 'const a = { "foo": { a: 2, z: 1 }, ["foo"]: { a: 2, z: 1 } };'
+        options: [{ selectors: [{ sorting: "asc", target: { name: "foo", type: "property" } }], sorting: "none" }],
+        output: "const a = { \"foo\": { a: 2, z: 1 }, [\"foo\"]: { a: 2, z: 1 } };"
     },
     {
         code: "const a = { [foo]: { z: 1, a: 2 } };",
         errors: [{ messageId: "object-keys-error" }],
-        options: [{ selectors: [{ target: { type: "property", name: "foo" }, sorting: "none" }] }],
+        options: [{ selectors: [{ sorting: "none", target: { name: "foo", type: "property" } }] }],
         output: "const a = { [foo]: { a: 2, z: 1 } };"
     },
     {
         code: "const a = { foo: { inner: { z: 1, a: 2 } } };",
         errors: [{ messageId: "object-keys-error" }],
         options: [{ selectors: [
-            { target: { type: "property", name: "foo" }, mode: "recursive", sorting: "none" },
-            { target: { type: "property", name: "inner" }, sorting: "asc" }
+            { mode: "recursive", sorting: "none", target: { name: "foo", type: "property" } },
+            { sorting: "asc", target: { name: "inner", type: "property" } }
         ] }],
         output: "const a = { foo: { inner: { a: 2, z: 1 } } };"
     },
@@ -114,15 +150,15 @@ const invalid: Array<InvalidTestCase<TMessageIds, TOptions>> = [
         code: "bar({ a: 1, z: 2 });",
         errors: [{ messageId: "object-keys-error" }],
         options: [{ selectors: [
-            { target: { type: "function", name: "bar" }, sorting: "desc" },
-            { target: { type: "function", name: "bar" }, sorting: "asc" }
+            { sorting: "desc", target: { name: "bar", type: "function" } },
+            { sorting: "asc", target: { name: "bar", type: "function" } }
         ] }],
         output: "bar({ z: 2, a: 1 });"
     },
     {
         code: "bar({ a: next(), id: next() });",
         errors: [{ messageId: "object-keys-error" }],
-        options: [{ autofix: "safe", selectors: [{ target: { type: "function", name: "bar" }, orderedKeys: ["id"], sorting: "none" }] }],
+        options: [{ autofix: "safe", selectors: [{ orderedKeys: ["id"], sorting: "none", target: { name: "bar", type: "function" } }] }],
         output: null
     },
     {
@@ -302,9 +338,9 @@ describe("object-keys", () => {
 
     describe("complete sorting", () => {
         it("sorts 30 reversed members in one fix", () => {
-            const keys = Array.from({ length: 30 }, (_, index) => `key${String(index).padStart(2, "0")}`);
+            const keys = Array.from({ length: 30 }, (_, index) => `key${ String(index).padStart(2, "0") }`);
             function wrap(names: Array<string>) {
-                return `const value = { ${names.map(name => `${name}: 1`).join(", ")} };`;
+                return `const value = { ${ names.map(name => `${ name }: 1`).join(", ") } };`;
             }
             expectSingleFix("object-keys", wrap([...keys].reverse()), wrap(keys));
         });
@@ -321,12 +357,15 @@ describe("object-keys", () => {
 
         it.each([
             { sorting: "none" },
-            { target: { type: "unknown", name: "foo" } },
+            { target: { name: "foo", type: "unknown" } },
             { target: { type: "property" } },
-            { target: { type: "property", name: 123 } },
-            { target: { type: "property", name: "foo" }, mode: "unknown" },
-            { target: { type: "property", name: "foo" }, orderedKeys: ["id", "id"] },
-            { target: { type: "property", name: "foo" }, orderedKeys: [123] }
+            { target: { name: 123, type: "property" } },
+            { mode: "unknown", target: { name: "foo", type: "property" } },
+            { orderedKeys: ["id", "id"], target: { name: "foo", type: "property" } },
+            { orderedKeys: [123], target: { name: "foo", type: "property" } },
+            { target: { argument: -1, name: "foo", type: "function" } },
+            { target: { argument: 1.5, name: "foo", type: "function" } },
+            { target: { argument: "0", name: "foo", type: "function" } }
         ])("rejects invalid selectors: %j", selector => {
             const linter = new TSESLint.Linter();
             expect(() => linter.verify("const value = {};", [{

@@ -61,9 +61,22 @@ function matchesTarget(parent: TSESTree.Node, value: TSESTree.Node, target: TSel
         return parent.type === TSESTree.AST_NODE_TYPES.Property &&
             parent.value === value && getPropertyName(parent) === target.name;
     }
-    return parent.type === TSESTree.AST_NODE_TYPES.CallExpression &&
-        parent.arguments.some(argument => argument === value) &&
-        parent.callee.type === TSESTree.AST_NODE_TYPES.Identifier && parent.callee.name === target.name;
+    if (parent.type !== TSESTree.AST_NODE_TYPES.CallExpression || getCalleeName(parent.callee) !== target.name) {
+        return false;
+    }
+    return target.argument === undefined ?
+        parent.arguments.some(argument => argument === value) :
+        parent.arguments[target.argument] === value;
+}
+
+function getCalleeName(callee: TSESTree.Node): string | undefined {
+    if (callee.type === TSESTree.AST_NODE_TYPES.Identifier) {
+        return callee.name;
+    }
+    if (callee.type === TSESTree.AST_NODE_TYPES.MemberExpression && !callee.computed && callee.property.type === TSESTree.AST_NODE_TYPES.Identifier) {
+        const object = getCalleeName(callee.object);
+        return object && `${ object }.${ callee.property.name }`;
+    }
 }
 
 function getName(node: TSESTree.Property | TSESTree.SpreadElement | TSESTree.RestElement) {

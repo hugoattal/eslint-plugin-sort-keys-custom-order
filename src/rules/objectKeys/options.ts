@@ -4,8 +4,9 @@ import { properties, sortingProperties, type TRuleOptions, type TSortingOptions 
 export type TSelector = TSortingOptions & {
     mode?: "direct" | "recursive",
     target: {
-        type: "property" | "function",
-        name: string
+        argument?: number,
+        name: string,
+        type: "property" | "function"
     }
 };
 
@@ -34,6 +35,7 @@ export const objectProperties: JSONSchema.JSONSchema4ObjectSchema = {
                     target: {
                         additionalProperties: false,
                         properties: {
+                            argument: { minimum: 0, type: "integer" },
                             name: { type: "string" },
                             type: { enum: ["property", "function"], type: "string" }
                         },
